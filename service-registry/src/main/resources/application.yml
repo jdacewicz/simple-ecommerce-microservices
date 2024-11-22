@@ -8,6 +8,8 @@ spring:
 eureka:
   instance:
     hostname: localhost
+    leaseRenewalIntervalInSeconds: 30
+    leaseExpirationDurationInSeconds: 90
   client:
     register-with-eureka: false
     fetch-registry: false
