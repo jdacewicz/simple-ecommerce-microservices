@@ -1,0 +1,193 @@
+services:
+  config-server:
+    build:
+      context: ./config-server
+    container_name: config-server
+    ports:
+      - "8088:8088"
+    healthcheck:
+      test: "curl -f localhost:8088/actuator/health || exit 1"
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+    networks:
+      microservices:
+        aliases:
+          - "config-server"
+
+  service-registry:
+    build:
+      context: ./service-registry
+    container_name: service-registry
+    ports:
+      - "8761:8761"
+    environment:
+      - "SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8088"
+    healthcheck:
+      test: "curl -f localhost:8761/actuator/health || exit 1"
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+    depends_on:
+      config-server:
+        condition: service_healthy
+    networks:
+      microservices:
+        aliases:
+          - "service-registry"
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8060:8060"
+    depends_on:
+      orders-postgresql:
+        condition: service_healthy
+      service-registry:
+        condition: service_healthy
+    networks:
+      microservices:
+        aliases:
+          - "api-gateway"
+
+  products-mongodb:
+    image: "mongo:8.0.3"
+    container_name: products-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - products-mongodb:/data/db
+    environment:
+      - "MONGO_INITDB_ROOT_USERNAME=products_user"
+      - "MONGO_INITDB_ROOT_PASSWORD=products_password"
+    healthcheck:
+      test: "mongosh --eval 'db.adminCommand(\"ping\")' || exit 1"
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+    networks:
+      microservices:
+        aliases:
+          - "products-mongodb"
+
+  carts-mongodb:
+    image: "mongo:8.0.3"
+    container_name: carts-mongodb
+    ports:
+      - "27018:27018"
+    volumes:
+      - carts-mongodb:/data/db
+    environment:
+      - "MONGO_INITDB_ROOT_USERNAME=carts_user"
+      - "MONGO_INITDB_ROOT_PASSWORD=carts_password"
+    healthcheck:
+      test: "mongosh --eval 'db.adminCommand(\"ping\")' || exit 1"
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+    networks:
+      microservices:
+        aliases:
+          - "carts-mongodb"
+
+  orders-postgresql:
+    image: "postgres:16.0-alpine"
+    container_name: orders-postgresql
+    ports:
+      - "5432:5432"
+    volumes:
+      - orders-postgresql:/var/lib/postgresql/data
+    environment:
+      - "POSTGRES_USER=orders_user"
+      - "POSTGRES_PASSWORD=orders_password"
+      - "POSTGRES_DB=orders_db"
+    healthcheck:
+      test: "pg_isready -U orders_user -d orders_db"
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+    networks:
+      microservices:
+        aliases:
+          - "orders-postgresql"
+
+  product-service:
+    build:
+      context: ./product-service
+    container_name: product-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      products-mongodb:
+        condition: service_healthy
+      service-registry:
+        condition: service_healthy
+    environment:
+      - "SPRING_DATA_MONGODB_URI=mongodb://products_user:products_password@products-mongodb:27017/products?authSource=admin"
+    networks:
+      microservices:
+        aliases:
+          - "product-service"
+
+  order-service:
+    build:
+      context: ./order-service
+    container_name: order-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      orders-postgresql:
+        condition: service_healthy
+      service-registry:
+        condition: service_healthy
+    environment:
+      - "SPRING_DATASOURCE_URL=jdbc:postgresql://orders-postgresql:5432/orders_db"
+      - "SPRING_DATASOURCE_USERNAME=orders_user"
+      - "SPRING_DATASOURCE_PASSWORD=orders_password"
+    networks:
+      microservices:
+        aliases:
+          - "order-service"
+
+  cart-service:
+    build:
+      context: ./cart-service
+    container_name: cart-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      carts-mongodb:
+        condition: service_healthy
+      service-registry:
+        condition: service_healthy
+    environment:
+      - "SPRING_DATA_MONGODB_URI=mongodb://carts_user:carts_password@carts-mongodb:27017/carts?authSource=admin"
+    networks:
+      microservices:
+        aliases:
+          - "cart-service"
+
+volumes:
+  products-mongodb:
+    driver: local
+  carts-mongodb:
+    driver: local
+  orders-postgresql:
+    driver: local
+
+networks:
+  microservices:
+    driver: bridge

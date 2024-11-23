@@ -1,21 +1,7 @@
-server:
-  port: 8088
-  shutdown: graceful
-
 spring:
-  application:
-    name: config-server
-  profiles:
-    active: native
   output:
     ansi:
       enabled: always
-  cloud:
-    config:
-      server:
-        native:
-          search-locations:
-            - classpath:/config
 
 management:
   endpoint:

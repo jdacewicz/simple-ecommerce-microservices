@@ -4,4 +4,27 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://service-registry:8761/eureka/
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/v1/products/**
+          filters:
+            - RewritePath=/api/v1/products/(?<segment>.*), /${segment}
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/v1/orders/**
+          filters:
+            - RewritePath=/api/v1/orders/(?<segment>.*), /${segment}
+        - id: cart-service
+          uri: lb://cart-service
+          predicates:
+            - Path=/api/v1/carts/**
+          filters:
+            - RewritePath=/api/v1/carts/(?<segment>.*), /${segment}
