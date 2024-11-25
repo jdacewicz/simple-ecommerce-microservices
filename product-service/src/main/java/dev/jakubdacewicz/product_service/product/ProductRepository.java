@@ -11,4 +11,6 @@ public interface ProductRepository {
     Page<Product> findByNameContainingIgnoreCase(int page, int size, String name);
 
     Product save(Product product);
+
+    void deleteById(String id);
 }

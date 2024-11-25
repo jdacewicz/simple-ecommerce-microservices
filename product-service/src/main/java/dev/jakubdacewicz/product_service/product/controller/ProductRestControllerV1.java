@@ -59,6 +59,6 @@ public class ProductRestControllerV1 {
 
     @DeleteMapping("/{id}")
     public ProductDeletionResult deleteProduct(@NotBlank @PathVariable String id) {
-        throw new UnsupportedOperationException();
+        return productService.deleteProduct(id);
     }
 }

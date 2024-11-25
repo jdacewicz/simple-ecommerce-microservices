@@ -36,6 +36,11 @@ class DefaultProductRepository implements ProductRepository {
     public Product save(Product product) {
         return mongoProductRepository.save(product);
     }
+
+    @Override
+    public void deleteById(String id) {
+        mongoProductRepository.deleteById(id);
+    }
 }
 
 @Repository

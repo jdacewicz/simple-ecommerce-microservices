@@ -2,6 +2,7 @@ package dev.jakubdacewicz.product_service.product;
 
 import dev.jakubdacewicz.product_service.product.dto.DetailedProductDto;
 import dev.jakubdacewicz.product_service.product.dto.ProductCreationRequest;
+import dev.jakubdacewicz.product_service.product.dto.ProductDeletionResult;
 import dev.jakubdacewicz.product_service.product.dto.SummaryProductDto;
 import dev.jakubdacewicz.product_service.stock.StockService;
 import org.slf4j.Logger;
@@ -18,14 +19,14 @@ class DefaultProductService implements ProductService {
 
     private final ProductMapper productMapper;
 
-    private final StockService service;
+    private final StockService stockService;
 
     DefaultProductService(ProductRepository productRepository,
                           ProductMapper productMapper,
-                          StockService service) {
+                          StockService stockService) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
-        this.service = service;
+        this.stockService = stockService;
     }
 
     @Override
@@ -72,5 +73,18 @@ class DefaultProductService implements ProductService {
 
         logger.info("Successfully created product");
         return productMapper.toDetailedDto(newProduct);
+    }
+
+    @Override
+    public ProductDeletionResult deleteProduct(String id) {
+        logger.debug("Attempt to delete '{}' product", id);
+
+        Product product = productRepository.findById(id);
+
+        stockService.deleteStock(product.getStock().getId());
+        productRepository.deleteById(id);
+
+        logger.info("Successfully deleted '{}' product", id);
+        return new ProductDeletionResult(true);
     }
 }
