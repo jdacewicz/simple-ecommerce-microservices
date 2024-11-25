@@ -90,6 +90,11 @@ class DefaultCategoryService implements CategoryService {
 
     @Override
     public CategoryDeletionResult deleteCategory(String id) {
-        return null;
+        logger.debug("Attempt to delete '{}' category", id);
+
+        categoryRepository.delete(id);
+
+        logger.info("Successfully deleted '{}' category", id);
+        return new CategoryDeletionResult(true);
     }
 }

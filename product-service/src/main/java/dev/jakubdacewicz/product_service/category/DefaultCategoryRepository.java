@@ -55,8 +55,8 @@ class DefaultCategoryRepository implements CategoryRepository {
     }
 
     @Override
-    public boolean delete(String id) {
-        return false;
+    public void delete(String id) {
+        mongoCategoryRepository.deleteById(id);
     }
 }
 

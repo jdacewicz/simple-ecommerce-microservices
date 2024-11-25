@@ -20,5 +20,6 @@ public interface CategoryService {
     @Transactional
     CategoryUpdateResult updateCategoryEnable(String id, boolean enabled);
 
+    @Transactional
     CategoryDeletionResult deleteCategory(String id);
 }

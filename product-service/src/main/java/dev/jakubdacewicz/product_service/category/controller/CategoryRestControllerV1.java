@@ -57,6 +57,6 @@ public class CategoryRestControllerV1 {
 
     @DeleteMapping("/{id}")
     public CategoryDeletionResult deleteCategory(@NotBlank @PathVariable String id) {
-        throw new UnsupportedOperationException();
+        return categoryService.deleteCategory(id);
     }
 }

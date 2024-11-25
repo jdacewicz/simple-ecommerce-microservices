@@ -18,5 +18,5 @@ public interface CategoryRepository {
 
     boolean update(String id, boolean enabled);
 
-    boolean delete(String id);
+    void delete(String id);
 }
