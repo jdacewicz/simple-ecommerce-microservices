@@ -17,8 +17,6 @@ public record DetailedProductDto(
 
         StockDto stock,
 
-        String status,
-
         LocalDateTime createdAt,
 
         LocalDateTime updatedAt) {

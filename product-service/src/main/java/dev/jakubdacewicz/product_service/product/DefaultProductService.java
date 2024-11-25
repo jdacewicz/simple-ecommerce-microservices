@@ -1,7 +1,10 @@
 package dev.jakubdacewicz.product_service.product;
 
 import dev.jakubdacewicz.product_service.product.dto.DetailedProductDto;
+import dev.jakubdacewicz.product_service.product.dto.ProductCreationRequest;
 import dev.jakubdacewicz.product_service.product.dto.SummaryProductDto;
+import dev.jakubdacewicz.product_service.stock.StockService;
+import dev.jakubdacewicz.product_service.stock.dto.StockDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -16,10 +19,14 @@ class DefaultProductService implements ProductService {
 
     private final ProductMapper productMapper;
 
+    private final StockService service;
+
     DefaultProductService(ProductRepository productRepository,
-                          ProductMapper productMapper) {
+                          ProductMapper productMapper,
+                          StockService service) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
+        this.service = service;
     }
 
     @Override
@@ -55,5 +62,16 @@ class DefaultProductService implements ProductService {
 
         logger.info("Successfully got {} products at page {}", products.getNumberOfElements(), page);
         return products.map(productMapper::toSummaryDto);
+    }
+
+    @Override
+    public DetailedProductDto createProduct(ProductCreationRequest request) {
+        logger.debug("Attempt to create product");
+
+        Product product = productMapper.toProduct(request);
+        Product newProduct = productRepository.save(product);
+
+        logger.info("Successfully created product");
+        return productMapper.toDetailedDto(newProduct);
     }
 }

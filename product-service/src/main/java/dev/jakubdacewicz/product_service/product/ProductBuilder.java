@@ -1,7 +1,6 @@
 package dev.jakubdacewicz.product_service.product;
 
 import dev.jakubdacewicz.product_service.category.Category;
-import dev.jakubdacewicz.product_service.shared.types.ProductStatus;
 import dev.jakubdacewicz.product_service.stock.Stock;
 
 import java.time.LocalDateTime;
@@ -20,8 +19,6 @@ public class ProductBuilder {
     private LocalDateTime updatedAt;
 
     private Category category;
-
-    private ProductStatus status = ProductStatus.NOT_AVAILABLE;
 
     private UUID businessKey = UUID.randomUUID();
 
@@ -60,7 +57,12 @@ public class ProductBuilder {
         return this;
     }
 
+    public ProductBuilder businessKey(UUID businessKey) {
+        this.businessKey = businessKey;
+        return this;
+    }
+
     public Product build() {
-        return new Product(id, name, description, stock, createdAt, updatedAt, category, status, businessKey);
+        return new Product(id, name, description, stock, createdAt, updatedAt, category, businessKey);
     }
 }

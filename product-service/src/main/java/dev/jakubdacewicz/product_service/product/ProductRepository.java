@@ -9,4 +9,6 @@ public interface ProductRepository {
     Page<Product> findAll(int page, int size);
 
     Page<Product> findByNameContainingIgnoreCase(int page, int size, String name);
+
+    Product save(Product product);
 }

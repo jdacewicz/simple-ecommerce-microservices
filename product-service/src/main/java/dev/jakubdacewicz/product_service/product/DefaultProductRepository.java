@@ -31,6 +31,11 @@ class DefaultProductRepository implements ProductRepository {
     public Page<Product> findByNameContainingIgnoreCase(int page, int size, String name) {
         return mongoProductRepository.findByNameContainingIgnoreCase(name, PageRequest.of(page, size));
     }
+
+    @Override
+    public Product save(Product product) {
+        return mongoProductRepository.save(product);
+    }
 }
 
 @Repository

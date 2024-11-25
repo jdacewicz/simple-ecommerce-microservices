@@ -2,7 +2,7 @@ package dev.jakubdacewicz.product_service.product.controller;
 
 import dev.jakubdacewicz.product_service.product.ProductService;
 import dev.jakubdacewicz.product_service.product.dto.*;
-import dev.jakubdacewicz.product_service.shared.types.ProductStatus;
+import dev.jakubdacewicz.product_service.shared.types.StockStatus;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -41,8 +41,8 @@ public class ProductRestControllerV1 {
     }
 
     @PostMapping
-    public ProductCreationResult createProduct(@Valid @RequestBody ProductCreationRequest request) {
-        throw new UnsupportedOperationException();
+    public DetailedProductDto createProduct(@Valid @RequestBody ProductCreationRequest request) {
+        return productService.createProduct(request);
     }
 
     @PutMapping("/{id}")
@@ -53,7 +53,7 @@ public class ProductRestControllerV1 {
 
     @PutMapping("/{id}/status")
     public ProductStatusUpdateResult updateProductStatus(@NotBlank @PathVariable String id,
-                                                         @NotNull @RequestParam ProductStatus status) {
+                                                         @NotNull @RequestParam StockStatus status) {
         throw new UnsupportedOperationException();
     }
 

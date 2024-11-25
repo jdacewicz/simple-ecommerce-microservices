@@ -1,9 +1,14 @@
 package dev.jakubdacewicz.product_service.product;
 
+import dev.jakubdacewicz.product_service.category.Category;
+import dev.jakubdacewicz.product_service.category.CategoryBuilder;
 import dev.jakubdacewicz.product_service.category.CategoryMapper;
 import dev.jakubdacewicz.product_service.category.dto.SummaryCategoryDto;
 import dev.jakubdacewicz.product_service.product.dto.DetailedProductDto;
+import dev.jakubdacewicz.product_service.product.dto.ProductCreationRequest;
 import dev.jakubdacewicz.product_service.product.dto.SummaryProductDto;
+import dev.jakubdacewicz.product_service.stock.Stock;
+import dev.jakubdacewicz.product_service.stock.StockBuilder;
 import dev.jakubdacewicz.product_service.stock.StockMapper;
 import dev.jakubdacewicz.product_service.stock.dto.StockDto;
 import org.springframework.stereotype.Component;
@@ -22,24 +27,41 @@ class ProductMapper {
 
     SummaryProductDto toSummaryDto(Product product) {
         SummaryCategoryDto summaryCategoryDto = categoryMapper.toSummaryDto(product.getCategory());
+        StockDto stockDto = stockMapper.toDto(product.getStock());
         return new SummaryProductDto(product.getId(),
                 product.getName(),
                 product.getDescription(),
                 summaryCategoryDto,
-                product.getStock().getPrice(),
-                product.getStatus().name());
+                stockDto);
     }
 
     DetailedProductDto toDetailedDto(Product product) {
         SummaryCategoryDto summaryCategoryDto = categoryMapper.toSummaryDto(product.getCategory());
         StockDto stockDto = stockMapper.toDto(product.getStock());
+
         return new DetailedProductDto(product.getId(),
                 product.getName(),
                 product.getDescription(),
                 summaryCategoryDto,
                 stockDto,
-                product.getStatus().name(),
                 product.getCreatedAt(),
                 product.getUpdatedAt());
+    }
+
+    Product toProduct(ProductCreationRequest request) {
+        Stock stock = new StockBuilder()
+                .price(request.price())
+                .quantity(request.quantity())
+                .build();
+        Category category = new CategoryBuilder()
+                .id(request.categoryId())
+                .build();
+
+        return new ProductBuilder()
+                .name(request.name())
+                .description(request.description())
+                .stock(stock)
+                .category(category)
+                .build();
     }
 }
