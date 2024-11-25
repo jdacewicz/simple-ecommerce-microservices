@@ -25,6 +25,11 @@ class DefaultStockRepository implements StockRepository {
     public boolean updatePriceAndQuantityAndStatus(String id, BigDecimal price, int quantity, StockStatus stockStatus) {
         return mongoStockRepository.updatePriceAndQuantityAndStatus(id, price, quantity, stockStatus) > 0;
     }
+
+    @Override
+    public void deleteById(String id) {
+        mongoStockRepository.deleteById(id);
+    }
 }
 
 @Repository

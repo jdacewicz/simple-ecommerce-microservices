@@ -4,7 +4,6 @@ import dev.jakubdacewicz.product_service.product.dto.DetailedProductDto;
 import dev.jakubdacewicz.product_service.product.dto.ProductCreationRequest;
 import dev.jakubdacewicz.product_service.product.dto.SummaryProductDto;
 import dev.jakubdacewicz.product_service.stock.StockService;
-import dev.jakubdacewicz.product_service.stock.dto.StockDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;

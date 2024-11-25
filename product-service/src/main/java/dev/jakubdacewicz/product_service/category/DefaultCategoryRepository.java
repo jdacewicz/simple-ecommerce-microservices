@@ -71,9 +71,9 @@ interface MongoCategoryRepository extends MongoRepository<Category, String> {
     })
     long countByCategoryName(String categoryName);
 
-    @Update("{ $set: { 'name': ?1, 'description': ?2 } }")
+    @Update("{ '_id': ?0, $set: { 'name': ?1, 'description': ?2 } }")
     int updateNameAndDescription(String id, String name, String description);
 
-    @Update("{ $set: { 'enabled': ?1 } }")
+    @Update("{ '_id': ?0, $set: { 'enabled': ?1 } }")
     int updateEnabled(String id, boolean enabled);
 }
