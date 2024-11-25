@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-@Document(collation = "categories")
+@Document(collection = "categories")
 public class Category {
 
     @Id
