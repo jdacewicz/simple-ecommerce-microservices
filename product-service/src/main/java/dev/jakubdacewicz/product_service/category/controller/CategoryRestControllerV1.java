@@ -1,12 +1,19 @@
 package dev.jakubdacewicz.product_service.category.controller;
 
+import dev.jakubdacewicz.product_service.category.CategoryService;
 import dev.jakubdacewicz.product_service.category.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/categories")
+@RequestMapping("/api/v1/products/categories")
 public class CategoryRestControllerV1 {
+
+    private final CategoryService categoryService;
+
+    CategoryRestControllerV1(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     @GetMapping("/{id}")
     public SummaryCategoryDto getCategory(@PathVariable String id) {
@@ -26,8 +33,8 @@ public class CategoryRestControllerV1 {
     }
 
     @PostMapping
-    public CategoryCreationResult createCategory(@RequestBody CategoryCreationRequest request) {
-        throw new UnsupportedOperationException();
+    public SummaryCategoryDto createCategory(@RequestBody CategoryCreationRequest request) {
+        return categoryService.createCategory(request);
     }
 
     @PutMapping("/{id}")

@@ -1,4 +1,4 @@
-package dev.jakubdacewicz.product_service.product.controller;
+package dev.jakubdacewicz.product_service.product.dto;
 
 public record ProductDeletionResult(
 

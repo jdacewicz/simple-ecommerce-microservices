@@ -12,5 +12,7 @@ public record DetailedCategoryDto(
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
 
-        int productCount) {
+        int productCount,
+
+        boolean enabled) {
 }
