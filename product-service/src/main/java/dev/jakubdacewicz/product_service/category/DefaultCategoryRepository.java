@@ -1,5 +1,6 @@
 package dev.jakubdacewicz.product_service.category;
 
+import dev.jakubdacewicz.product_service.shared.exception.DocumentNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
@@ -15,7 +16,8 @@ class DefaultCategoryRepository implements CategoryRepository {
 
     @Override
     public Category findById(String id) {
-        return null;
+        return mongoCategoryRepository.findById(id)
+                .orElseThrow(() -> new DocumentNotFoundException("Could not find category with id: " + id));
     }
 
     @Override

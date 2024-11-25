@@ -17,7 +17,7 @@ public class CategoryRestControllerV1 {
 
     @GetMapping("/{id}")
     public SummaryCategoryDto getCategory(@PathVariable String id) {
-        throw new UnsupportedOperationException();
+        return categoryService.getCategory(id);
     }
 
     @GetMapping("/{id}/details")
