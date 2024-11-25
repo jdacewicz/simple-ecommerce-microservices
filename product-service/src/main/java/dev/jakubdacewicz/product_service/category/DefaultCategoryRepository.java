@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -45,12 +46,12 @@ class DefaultCategoryRepository implements CategoryRepository {
 
     @Override
     public boolean update(String id, String name, String description) {
-        return false;
+        return mongoCategoryRepository.updateNameAndDescription(id, name, description) > 0;
     }
 
     @Override
     public boolean update(String id, boolean enabled) {
-        return false;
+        return mongoCategoryRepository.updateEnabled(id, enabled) > 0;
     }
 
     @Override
@@ -69,4 +70,10 @@ interface MongoCategoryRepository extends MongoRepository<Category, String> {
             "{ $project: { productCount: { $size: '$products' } } }"
     })
     long countByCategoryName(String categoryName);
+
+    @Update("{ $set: { 'name': ?1, 'description': ?2 } }")
+    int updateNameAndDescription(String id, String name, String description);
+
+    @Update("{ $set: { 'enabled': ?1 } }")
+    int updateEnabled(String id, boolean enabled);
 }

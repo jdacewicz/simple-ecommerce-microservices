@@ -69,13 +69,23 @@ class DefaultCategoryService implements CategoryService {
     }
 
     @Override
-    public DetailedCategoryDto updateCategory(String id, CategoryUpdateRequest request) {
-        return null;
+    public CategoryUpdateResult updateCategory(String id, CategoryUpdateRequest request) {
+        logger.debug("Attempt to update '{}' category", id);
+
+        boolean updatedCategory = categoryRepository.update(id, request.name(), request.description());
+
+        logger.info("Successfully updated '{}' category", id);
+        return new CategoryUpdateResult(updatedCategory);
     }
 
     @Override
-    public DetailedCategoryDto updateCategoryEnable(String id, boolean enabled) {
-        return null;
+    public CategoryUpdateResult updateCategoryEnable(String id, boolean enabled) {
+        logger.debug("Attempt to update '{}' category enable status", id);
+
+        boolean updatedCategory = categoryRepository.update(id, enabled);
+
+        logger.info("Successfully updated '{}' category enable status", id);
+        return new CategoryUpdateResult(updatedCategory);
     }
 
     @Override

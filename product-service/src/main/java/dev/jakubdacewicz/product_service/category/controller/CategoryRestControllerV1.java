@@ -46,13 +46,13 @@ public class CategoryRestControllerV1 {
     @PutMapping("/{id}")
     public CategoryUpdateResult updateCategory(@NotBlank @PathVariable String id,
                                                @Valid @RequestBody CategoryUpdateRequest request) {
-        throw new UnsupportedOperationException();
+        return categoryService.updateCategory(id, request);
     }
 
     @PutMapping("/{id}/enable")
-    public CategoryEnableUpdateResult updateCategoryEnable(@NotBlank @PathVariable String id,
-                                                           @RequestParam boolean enabled) {
-        throw new UnsupportedOperationException();
+    public CategoryUpdateResult updateCategoryEnable(@NotBlank @PathVariable String id,
+                                                     @RequestParam boolean enabled) {
+        return categoryService.updateCategoryEnable(id, enabled);
     }
 
     @DeleteMapping("/{id}")
