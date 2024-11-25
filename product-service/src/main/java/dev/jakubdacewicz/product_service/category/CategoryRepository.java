@@ -8,6 +8,8 @@ public interface CategoryRepository {
 
     Page<Category> findAll(int page, int size, String name);
 
+    long countProducts(String name);
+
     Category save(Category category);
 
     boolean update(String id, String name, String description);

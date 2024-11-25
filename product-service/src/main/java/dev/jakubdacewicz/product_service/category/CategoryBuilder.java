@@ -1,6 +1,10 @@
 package dev.jakubdacewicz.product_service.category;
 
+import dev.jakubdacewicz.product_service.product.Product;
+
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class CategoryBuilder {
@@ -9,6 +13,8 @@ public class CategoryBuilder {
 
     private String name;
     private String description = "";
+
+    private Set<Product> products = new HashSet<>();
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -29,6 +35,11 @@ public class CategoryBuilder {
 
     public CategoryBuilder description(String description) {
         this.description = description;
+        return this;
+    }
+
+    public CategoryBuilder products(Set<Product> products) {
+        this.products = products;
         return this;
     }
 
@@ -53,6 +64,6 @@ public class CategoryBuilder {
     }
 
     public Category build() {
-        return new Category(id, name, description, createdAt, updatedAt, enabled, businessKey);
+        return new Category(id, name, description, products, createdAt, updatedAt, enabled, businessKey);
     }
 }

@@ -23,17 +23,23 @@ class DefaultCategoryService implements CategoryService {
 
     @Override
     public SummaryCategoryDto getCategory(String id) {
-        logger.debug("Attempt to get '{}' category", id);
+        logger.debug("Attempt to get '{}' summary category", id);
 
         Category category = categoryRepository.findById(id);
 
-        logger.info("Successfully got '{}' category", id);
+        logger.info("Successfully got '{}' summary category", id);
         return categoryMapper.toSummaryDto(category);
     }
 
     @Override
     public DetailedCategoryDto getCategoryDetails(String id) {
-        return null;
+        logger.debug("Attempt to get '{}' detailed category", id);
+
+        long productCount = categoryRepository.countProducts(id);
+        Category category = categoryRepository.findById(id);
+
+        logger.info("Successfully got '{}' detailed category", id);
+        return categoryMapper.toDetailedDto(category, productCount);
     }
 
     @Override

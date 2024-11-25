@@ -28,7 +28,7 @@ public class CategoryRestControllerV1 {
 
     @GetMapping("/{id}/details")
     public DetailedCategoryDto getCategoryDetails(@NotBlank @PathVariable String id) {
-        throw new UnsupportedOperationException();
+        return categoryService.getCategoryDetails(id);
     }
 
     @GetMapping

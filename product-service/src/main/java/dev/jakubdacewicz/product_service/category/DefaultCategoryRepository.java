@@ -2,6 +2,7 @@ package dev.jakubdacewicz.product_service.category;
 
 import dev.jakubdacewicz.product_service.shared.exception.DocumentNotFoundException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -23,6 +24,11 @@ class DefaultCategoryRepository implements CategoryRepository {
     @Override
     public Page<Category> findAll(int page, int size, String name) {
         return null;
+    }
+
+    @Override
+    public long countProducts(String name) {
+        return mongoCategoryRepository.countByCategoryName(name);
     }
 
     @Override
@@ -49,4 +55,9 @@ class DefaultCategoryRepository implements CategoryRepository {
 @Repository
 interface MongoCategoryRepository extends MongoRepository<Category, String> {
 
+    @Aggregation(pipeline = {
+            "{ $match: { _id: ?0 } }",
+            "{ $project: { productCount: { $size: '$products' } } }"
+    })
+    long countByCategoryName(String categoryName);
 }
