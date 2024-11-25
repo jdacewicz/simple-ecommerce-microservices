@@ -1,16 +1,19 @@
 package dev.jakubdacewicz.product_service.category;
 
+import dev.jakubdacewicz.product_service.product.Product;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
-@Document(collation = "categories")
+@Document(collection = "categories")
 public class Category {
 
     @Id
@@ -20,6 +23,9 @@ public class Category {
     private String name;
 
     private String description;
+
+    @DBRef(lazy = true)
+    private Set<Product> products;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -35,6 +41,7 @@ public class Category {
     public Category(String id,
                     String name,
                     String description,
+                    Set<Product> products,
                     LocalDateTime createdAt,
                     LocalDateTime updatedAt,
                     boolean enabled,
@@ -42,6 +49,7 @@ public class Category {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.products = products;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.enabled = enabled;
@@ -73,6 +81,10 @@ public class Category {
         return description;
     }
 
+    public Set<Product> getProducts() {
+        return products;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -99,6 +111,10 @@ public class Category {
 
     void setDescription(String description) {
         this.description = description;
+    }
+
+    void setProducts(Set<Product> products) {
+        this.products = products;
     }
 
     void setCreatedAt(LocalDateTime createdAt) {

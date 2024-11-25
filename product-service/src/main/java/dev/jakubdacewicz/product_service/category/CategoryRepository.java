@@ -6,7 +6,11 @@ public interface CategoryRepository {
 
     Category findById(String id);
 
-    Page<Category> findAll(int page, int size, String name);
+    Page<Category> findAll(int page, int size);
+
+    Page<Category> findByNameContainingIgnoreCase(int page, int size, String name);
+
+    long countProducts(String name);
 
     Category save(Category category);
 
@@ -14,5 +18,5 @@ public interface CategoryRepository {
 
     boolean update(String id, boolean enabled);
 
-    boolean delete(String id);
+    void delete(String id);
 }

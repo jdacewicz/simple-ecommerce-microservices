@@ -2,6 +2,7 @@ package dev.jakubdacewicz.product_service.category;
 
 import dev.jakubdacewicz.product_service.category.dto.*;
 import org.springframework.data.domain.Page;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface CategoryService {
 
@@ -13,9 +14,12 @@ public interface CategoryService {
 
     SummaryCategoryDto createCategory(CategoryCreationRequest request);
 
-    DetailedCategoryDto updateCategory(String id, CategoryUpdateRequest request);
+    @Transactional
+    CategoryUpdateResult updateCategory(String id, CategoryUpdateRequest request);
 
-    DetailedCategoryDto updateCategoryEnable(String id, boolean enabled);
+    @Transactional
+    CategoryUpdateResult updateCategoryEnable(String id, boolean enabled);
 
+    @Transactional
     CategoryDeletionResult deleteCategory(String id);
 }
