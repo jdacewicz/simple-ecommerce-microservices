@@ -1,6 +1,7 @@
 package dev.jakubdacewicz.product_service.stock;
 
 import dev.jakubdacewicz.product_service.shared.types.StockStatus;
+import dev.jakubdacewicz.product_service.stock.dto.StockDeleteResult;
 import dev.jakubdacewicz.product_service.stock.dto.StockUpdateRequest;
 import dev.jakubdacewicz.product_service.stock.dto.StockUpdateResult;
 import org.slf4j.Logger;
@@ -32,5 +33,15 @@ class DefaultStockService implements StockService {
 
         logger.info("Successfully updated '{}' stock", id);
         return new StockUpdateResult(updatedStock);
+    }
+
+    @Override
+    public StockDeleteResult deleteStock(String id) {
+        logger.debug("Attempt to delete '{}' stock", id);
+
+        stockRepository.deleteById(id);
+
+        logger.info("Successfully deleted '{}' stock", id);
+        return new StockDeleteResult(true);
     }
 }

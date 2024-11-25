@@ -9,4 +9,6 @@ public interface StockRepository {
     boolean updatePriceAndQuantity(String id, BigDecimal price, int quantity);
 
     boolean updatePriceAndQuantityAndStatus(String id, BigDecimal price, int quantity, StockStatus stockStatus);
+
+    void deleteById(String id);
 }
