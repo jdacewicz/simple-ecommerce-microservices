@@ -1,5 +1,6 @@
 package dev.jakubdacewicz.product_service.product.controller;
 
+import dev.jakubdacewicz.product_service.product.ProductService;
 import dev.jakubdacewicz.product_service.product.dto.*;
 import dev.jakubdacewicz.product_service.shared.types.ProductStatus;
 import org.springframework.data.domain.Page;
@@ -9,9 +10,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/products")
 public class ProductRestControllerV1 {
 
+    private final ProductService productService;
+
+    ProductRestControllerV1(ProductService productService) {
+        this.productService = productService;
+    }
+
     @GetMapping("/{id}")
     public SummaryProductDto getProduct(@PathVariable String id) {
-        throw new UnsupportedOperationException();
+        return productService.getProduct(id);
     }
 
     @GetMapping("/{id}/details")

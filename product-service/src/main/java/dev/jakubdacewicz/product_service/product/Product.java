@@ -25,7 +25,7 @@ public class Product {
 
     private String description;
 
-    @DocumentReference(lazy = true)
+    @DocumentReference
     private Stock stock;
 
     @CreatedDate
@@ -34,7 +34,7 @@ public class Product {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @DocumentReference(lazy = true)
+    @DocumentReference
     private Category category;
 
     private ProductStatus status;

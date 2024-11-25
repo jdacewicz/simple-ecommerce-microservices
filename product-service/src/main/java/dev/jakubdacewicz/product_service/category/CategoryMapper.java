@@ -6,7 +6,7 @@ import dev.jakubdacewicz.product_service.category.dto.SummaryCategoryDto;
 import org.springframework.stereotype.Component;
 
 @Component
-class CategoryMapper {
+public class CategoryMapper {
 
     public Category toCategory(CategoryCreationRequest request) {
         return new CategoryBuilder()
