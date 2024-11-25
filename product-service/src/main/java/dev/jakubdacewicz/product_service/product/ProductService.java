@@ -18,5 +18,11 @@ public interface ProductService {
     ProductUpdateResult updateProduct(String id, ProductUpdateRequest request);
 
     @Transactional
+    ProductUpdateResult addToCategory(String id, String categoryId);
+
+    @Transactional
+    ProductUpdateResult removeFromCategory(String id);
+
+    @Transactional
     ProductDeletionResult deleteProduct(String id);
 }

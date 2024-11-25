@@ -1,5 +1,6 @@
 package dev.jakubdacewicz.product_service.shared.advice;
 
+import dev.jakubdacewicz.product_service.shared.exception.CategoryAssignedException;
 import dev.jakubdacewicz.product_service.shared.exception.DocumentNotFoundException;
 import dev.jakubdacewicz.product_service.shared.model.ApiError;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class GlobalRestControllerAdvice {
         return new ApiError(HttpStatus.NOT_FOUND.value(), exception.getMessage());
     }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ExceptionHandler({HttpMessageNotReadableException.class, CategoryAssignedException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
         return new ApiError(HttpStatus.BAD_REQUEST.value(), exception.getMessage());

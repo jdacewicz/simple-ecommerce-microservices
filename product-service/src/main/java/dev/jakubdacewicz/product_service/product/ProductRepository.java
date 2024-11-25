@@ -14,5 +14,9 @@ public interface ProductRepository {
 
     boolean updateNameAndDescription(String id, String name, String description);
 
+    boolean updateCategory(String id, String categoryId);
+
+    boolean resetCategory(String id);
+
     void deleteById(String id);
 }

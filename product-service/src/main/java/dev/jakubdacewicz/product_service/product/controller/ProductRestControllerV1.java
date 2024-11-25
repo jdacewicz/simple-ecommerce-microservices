@@ -49,6 +49,17 @@ public class ProductRestControllerV1 {
         return productService.updateProduct(id, request);
     }
 
+    @PutMapping("/{productId}/categories/{categoryId}/add")
+    public ProductUpdateResult addToCategory(@NotBlank @PathVariable String productId,
+                                             @NotBlank @PathVariable String categoryId) {
+        return productService.addToCategory(productId, categoryId);
+    }
+
+    @PutMapping("/{id}/categories/remove")
+    public ProductUpdateResult removeFromCategory(@NotBlank @PathVariable String id) {
+        return productService.removeFromCategory(id);
+    }
+
     @DeleteMapping("/{id}")
     public ProductDeletionResult deleteProduct(@NotBlank @PathVariable String id) {
         return productService.deleteProduct(id);

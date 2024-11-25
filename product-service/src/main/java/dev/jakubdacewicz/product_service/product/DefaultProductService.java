@@ -1,6 +1,7 @@
 package dev.jakubdacewicz.product_service.product;
 
 import dev.jakubdacewicz.product_service.product.dto.*;
+import dev.jakubdacewicz.product_service.shared.exception.CategoryAssignedException;
 import dev.jakubdacewicz.product_service.stock.StockService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +81,34 @@ class DefaultProductService implements ProductService {
 
         logger.info("Successfully updated '{}' product", id);
         return new ProductUpdateResult(productUpdated);
+    }
+
+    @Override
+    public ProductUpdateResult addToCategory(String id, String categoryId) {
+        logger.debug("Attempt to add '{}' product to '{}' category", id, categoryId);
+
+        Product product = productRepository.findById(id);
+        if (product.getCategory() != null) {
+            throw new CategoryAssignedException("Product already assigned to category");
+        }
+        boolean categoryUpdated = productRepository.updateCategory(id, categoryId);
+
+        logger.info("Successfully added '{}' product to '{}' category", id, categoryId);
+        return new ProductUpdateResult(categoryUpdated);
+    }
+
+    @Override
+    public ProductUpdateResult removeFromCategory(String id) {
+        logger.debug("Attempt to remove '{}' product from category", id);
+
+        Product product = productRepository.findById(id);
+        if (product.getCategory() == null) {
+            throw new CategoryAssignedException("Product not assigned to category");
+        }
+        boolean categoryUpdated = productRepository.resetCategory(id);
+
+        logger.info("Successfully removed '{}' product from category", id);
+        return new ProductUpdateResult(categoryUpdated);
     }
 
     @Override

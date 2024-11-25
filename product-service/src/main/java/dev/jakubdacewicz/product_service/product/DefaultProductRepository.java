@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
 
@@ -44,6 +45,16 @@ class DefaultProductRepository implements ProductRepository {
     }
 
     @Override
+    public boolean updateCategory(String id, String categoryId) {
+        return mongoProductRepository.updateCategory(id, categoryId) > 0;
+    }
+
+    @Override
+    public boolean resetCategory(String id) {
+        return mongoProductRepository.resetCategory(id) > 0;
+    }
+
+    @Override
     public void deleteById(String id) {
         mongoProductRepository.deleteById(id);
     }
@@ -54,6 +65,15 @@ interface MongoProductRepository extends MongoRepository<Product, String> {
 
     Page<Product> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
-    @Update("{ '_id': ?0, $set: { 'name': ?1, 'description': ?2 } }")
+    @Query("{ '_id': ?0 }")
+    @Update("{ $set: { 'name': ?1, 'description': ?2 } }")
     int updateNameAndDescription(String id, String name, String description);
+
+    @Query("{ '_id': ?0 }")
+    @Update("{ $set: { 'category': ?1 } }")
+    int updateCategory(String productId, String categoryId);
+
+    @Query("{ '_id': ?0 }")
+    @Update("{ $unset: { 'category': '' } }")
+    int resetCategory(String productId);
 }
