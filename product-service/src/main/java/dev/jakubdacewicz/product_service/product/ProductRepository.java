@@ -12,5 +12,7 @@ public interface ProductRepository {
 
     Product save(Product product);
 
+    boolean updateNameAndDescription(String id, String name, String description);
+
     void deleteById(String id);
 }

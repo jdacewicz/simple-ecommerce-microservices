@@ -1,9 +1,6 @@
 package dev.jakubdacewicz.product_service.product;
 
-import dev.jakubdacewicz.product_service.product.dto.DetailedProductDto;
-import dev.jakubdacewicz.product_service.product.dto.ProductCreationRequest;
-import dev.jakubdacewicz.product_service.product.dto.ProductDeletionResult;
-import dev.jakubdacewicz.product_service.product.dto.SummaryProductDto;
+import dev.jakubdacewicz.product_service.product.dto.*;
 import dev.jakubdacewicz.product_service.stock.StockService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +70,16 @@ class DefaultProductService implements ProductService {
 
         logger.info("Successfully created product");
         return productMapper.toDetailedDto(newProduct);
+    }
+
+    @Override
+    public ProductUpdateResult updateProduct(String id, ProductUpdateRequest request) {
+        logger.debug("Attempt to update '{}' product", id);
+
+        boolean productUpdated = productRepository.updateNameAndDescription(id, request.name(), request.description());
+
+        logger.info("Successfully updated '{}' product", id);
+        return new ProductUpdateResult(productUpdated);
     }
 
     @Override

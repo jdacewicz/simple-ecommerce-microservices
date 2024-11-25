@@ -2,10 +2,8 @@ package dev.jakubdacewicz.product_service.product.controller;
 
 import dev.jakubdacewicz.product_service.product.ProductService;
 import dev.jakubdacewicz.product_service.product.dto.*;
-import dev.jakubdacewicz.product_service.shared.types.StockStatus;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.data.domain.Page;
@@ -48,13 +46,7 @@ public class ProductRestControllerV1 {
     @PutMapping("/{id}")
     public ProductUpdateResult updateProduct(@NotBlank @PathVariable String id,
                                              @Valid @RequestBody ProductUpdateRequest request) {
-        throw new UnsupportedOperationException();
-    }
-
-    @PutMapping("/{id}/status")
-    public ProductStatusUpdateResult updateProductStatus(@NotBlank @PathVariable String id,
-                                                         @NotNull @RequestParam StockStatus status) {
-        throw new UnsupportedOperationException();
+        return productService.updateProduct(id, request);
     }
 
     @DeleteMapping("/{id}")

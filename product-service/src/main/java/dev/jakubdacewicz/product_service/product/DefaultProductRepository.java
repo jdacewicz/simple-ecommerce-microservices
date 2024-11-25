@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -38,6 +39,11 @@ class DefaultProductRepository implements ProductRepository {
     }
 
     @Override
+    public boolean updateNameAndDescription(String id, String name, String description) {
+        return mongoProductRepository.updateNameAndDescription(id, name, description) > 0;
+    }
+
+    @Override
     public void deleteById(String id) {
         mongoProductRepository.deleteById(id);
     }
@@ -47,4 +53,7 @@ class DefaultProductRepository implements ProductRepository {
 interface MongoProductRepository extends MongoRepository<Product, String> {
 
     Page<Product> findByNameContainingIgnoreCase(String name, Pageable pageable);
+
+    @Update("{ '_id': ?0, $set: { 'name': ?1, 'description': ?2 } }")
+    int updateNameAndDescription(String id, String name, String description);
 }
