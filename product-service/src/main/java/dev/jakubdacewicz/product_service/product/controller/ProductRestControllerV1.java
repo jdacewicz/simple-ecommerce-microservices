@@ -37,7 +37,7 @@ public class ProductRestControllerV1 {
     public Page<SummaryProductDto> getProducts(@PositiveOrZero @RequestParam(defaultValue = "0") int page,
                                                @Positive @RequestParam(defaultValue = "10") int size,
                                                @RequestParam(required = false) String name) {
-        throw new UnsupportedOperationException();
+        return productService.getProducts(page, size, name);
     }
 
     @PostMapping

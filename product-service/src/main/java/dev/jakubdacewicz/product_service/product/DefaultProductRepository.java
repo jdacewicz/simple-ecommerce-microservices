@@ -1,6 +1,9 @@
 package dev.jakubdacewicz.product_service.product;
 
 import dev.jakubdacewicz.product_service.shared.exception.DocumentNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,9 +21,20 @@ class DefaultProductRepository implements ProductRepository {
         return mongoProductRepository.findById(id)
                 .orElseThrow(() -> new DocumentNotFoundException("Could not find product with id: " + id));
     }
+
+    @Override
+    public Page<Product> findAll(int page, int size) {
+        return mongoProductRepository.findAll(PageRequest.of(page, size));
+    }
+
+    @Override
+    public Page<Product> findByNameContainingIgnoreCase(int page, int size, String name) {
+        return mongoProductRepository.findByNameContainingIgnoreCase(name, PageRequest.of(page, size));
+    }
 }
 
 @Repository
 interface MongoProductRepository extends MongoRepository<Product, String> {
 
+    Page<Product> findByNameContainingIgnoreCase(String name, Pageable pageable);
 }

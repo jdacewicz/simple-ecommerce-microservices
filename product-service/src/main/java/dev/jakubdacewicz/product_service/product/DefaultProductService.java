@@ -4,6 +4,7 @@ import dev.jakubdacewicz.product_service.product.dto.DetailedProductDto;
 import dev.jakubdacewicz.product_service.product.dto.SummaryProductDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,5 +40,20 @@ class DefaultProductService implements ProductService {
 
         logger.info("Successfully got '{}' detailed product", id);
         return productMapper.toDetailedDto(product);
+    }
+
+    @Override
+    public Page<SummaryProductDto> getProducts(int page, int size, String name) {
+        logger.debug("Attempt to get all products");
+
+        Page<Product> products;
+        if (name == null || name.isBlank()) {
+            products = productRepository.findAll(page, size);
+        } else {
+            products = productRepository.findByNameContainingIgnoreCase(page, size, name);
+        }
+
+        logger.info("Successfully got {} products at page {}", products.getNumberOfElements(), page);
+        return products.map(productMapper::toSummaryDto);
     }
 }
