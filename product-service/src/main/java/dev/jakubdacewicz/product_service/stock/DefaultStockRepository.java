@@ -27,6 +27,11 @@ class DefaultStockRepository implements StockRepository {
     }
 
     @Override
+    public boolean updateStatus(String id, StockStatus status) {
+        return mongoStockRepository.updateStatus(id, status) > 0;
+    }
+
+    @Override
     public void deleteById(String id) {
         mongoStockRepository.deleteById(id);
     }
@@ -40,4 +45,7 @@ interface MongoStockRepository extends MongoRepository<Stock, String> {
 
     @Update("{ '_id': ?0, $set: { 'price': ?1, 'quantity': ?2, 'stockStatus': ?3 } }")
     int updatePriceAndQuantityAndStatus(String id, BigDecimal price, int quantity, StockStatus stockStatus);
+
+    @Update("{ '_id': ?0, $set: { 'stockStatus': ?1 } }")
+    int updateStatus(String id, StockStatus stockStatus);
 }

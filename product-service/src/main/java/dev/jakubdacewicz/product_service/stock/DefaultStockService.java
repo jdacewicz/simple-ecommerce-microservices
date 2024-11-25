@@ -36,6 +36,16 @@ class DefaultStockService implements StockService {
     }
 
     @Override
+    public StockUpdateResult updateStockStatus(String id, StockStatus status) {
+        logger.debug("Attempt to update '{}' stock status", id);
+
+        boolean updatedStock = stockRepository.updateStatus(id, status);
+
+        logger.info("Successfully updated '{}' stock status", id);
+        return new StockUpdateResult(updatedStock);
+    }
+
+    @Override
     public StockDeleteResult deleteStock(String id) {
         logger.debug("Attempt to delete '{}' stock", id);
 
