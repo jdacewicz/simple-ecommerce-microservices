@@ -61,9 +61,6 @@ services:
       - "27017:27017"
     volumes:
       - products-mongodb:/data/db
-    environment:
-      - "MONGO_INITDB_ROOT_USERNAME=products_user"
-      - "MONGO_INITDB_ROOT_PASSWORD=products_password"
     healthcheck:
       test: "mongosh --eval 'db.adminCommand(\"ping\")' || exit 1"
       interval: 2s
@@ -82,9 +79,6 @@ services:
       - "27018:27018"
     volumes:
       - carts-mongodb:/data/db
-    environment:
-      - "MONGO_INITDB_ROOT_USERNAME=carts_user"
-      - "MONGO_INITDB_ROOT_PASSWORD=carts_password"
     healthcheck:
       test: "mongosh --eval 'db.adminCommand(\"ping\")' || exit 1"
       interval: 2s
@@ -132,7 +126,9 @@ services:
       service-registry:
         condition: service_healthy
     environment:
-      - "SPRING_DATA_MONGODB_URI=mongodb://products_user:products_password@products-mongodb:27017/products?authSource=admin"
+      - "SPRING_DATA_MONGODB_DATABASE=products"
+      - "SPRING_DATA_MONGODB_HOST=products-mongodb"
+      - "SPRING_DATA_MONGODB_PORT=27017"
     networks:
       microservices:
         aliases:
@@ -174,7 +170,9 @@ services:
       service-registry:
         condition: service_healthy
     environment:
-      - "SPRING_DATA_MONGODB_URI=mongodb://carts_user:carts_password@carts-mongodb:27017/carts?authSource=admin"
+      - "SPRING_DATA_MONGODB_DATABASE=carts"
+      - "SPRING_DATA_MONGODB_HOST=carts-mongodb"
+      - "SPRING_DATA_MONGODB_PORT=27018"
     networks:
       microservices:
         aliases:
