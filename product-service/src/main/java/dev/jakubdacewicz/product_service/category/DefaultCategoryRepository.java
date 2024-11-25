@@ -2,6 +2,8 @@ package dev.jakubdacewicz.product_service.category;
 
 import dev.jakubdacewicz.product_service.shared.exception.DocumentNotFoundException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
@@ -22,8 +24,13 @@ class DefaultCategoryRepository implements CategoryRepository {
     }
 
     @Override
-    public Page<Category> findAll(int page, int size, String name) {
-        return null;
+    public Page<Category> findAll(int page, int size) {
+        return mongoCategoryRepository.findAll(PageRequest.of(page, size));
+    }
+
+    @Override
+    public Page<Category> findByNameContainingIgnoreCase(int page, int size, String name) {
+        return mongoCategoryRepository.findByNameContainingIgnoreCase(name, PageRequest.of(page, size));
     }
 
     @Override
@@ -54,6 +61,8 @@ class DefaultCategoryRepository implements CategoryRepository {
 
 @Repository
 interface MongoCategoryRepository extends MongoRepository<Category, String> {
+
+    Page<Category> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
     @Aggregation(pipeline = {
             "{ $match: { _id: ?0 } }",

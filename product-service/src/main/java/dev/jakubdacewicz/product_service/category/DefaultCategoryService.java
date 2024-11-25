@@ -44,7 +44,17 @@ class DefaultCategoryService implements CategoryService {
 
     @Override
     public Page<SummaryCategoryDto> getCategories(int page, int size, String name) {
-        return null;
+        logger.debug("Attempt to get all categories");
+
+        Page<Category> categories;
+        if (name == null || name.isBlank()) {
+            categories = categoryRepository.findAll(page, size);
+        } else {
+            categories = categoryRepository.findByNameContainingIgnoreCase(page, size, name);
+        }
+
+        logger.info("Successfully got {} categories at page {}", categories.getNumberOfElements(), page);
+        return categories.map(categoryMapper::toSummaryDto);
     }
 
     @Override

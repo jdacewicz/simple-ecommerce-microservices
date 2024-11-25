@@ -35,7 +35,7 @@ public class CategoryRestControllerV1 {
     public Page<SummaryCategoryDto> getCategories(@PositiveOrZero @RequestParam(defaultValue = "0") int page,
                                                   @Positive @RequestParam(defaultValue = "10") int size,
                                                   @RequestParam(required = false) String name) {
-        throw new UnsupportedOperationException();
+        return categoryService.getCategories(page, size, name);
     }
 
     @PostMapping

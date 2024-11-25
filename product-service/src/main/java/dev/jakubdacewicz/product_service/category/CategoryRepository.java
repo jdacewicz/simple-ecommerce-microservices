@@ -6,7 +6,9 @@ public interface CategoryRepository {
 
     Category findById(String id);
 
-    Page<Category> findAll(int page, int size, String name);
+    Page<Category> findAll(int page, int size);
+
+    Page<Category> findByNameContainingIgnoreCase(int page, int size, String name);
 
     long countProducts(String name);
 
