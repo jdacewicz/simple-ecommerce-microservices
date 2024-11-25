@@ -1,50 +1,67 @@
 package dev.jakubdacewicz.product_service.product.controller;
 
+import dev.jakubdacewicz.product_service.product.ProductService;
 import dev.jakubdacewicz.product_service.product.dto.*;
-import dev.jakubdacewicz.product_service.shared.types.ProductStatus;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Validated
 @RequestMapping("/api/v1/products")
 public class ProductRestControllerV1 {
 
+    private final ProductService productService;
+
+    ProductRestControllerV1(ProductService productService) {
+        this.productService = productService;
+    }
+
     @GetMapping("/{id}")
-    public SummaryProductDto getProduct(@PathVariable String id) {
-        throw new UnsupportedOperationException();
+    public SummaryProductDto getProduct(@NotBlank @PathVariable String id) {
+        return productService.getProduct(id);
     }
 
     @GetMapping("/{id}/details")
-    public DetailedProductDto getProductDetails(@PathVariable String id) {
-        throw new UnsupportedOperationException();
+    public DetailedProductDto getProductDetails(@NotBlank @PathVariable String id) {
+        return productService.getProductDetails(id);
     }
 
     @GetMapping
-    public Page<SummaryProductDto> getProducts(@RequestParam(defaultValue = "0") int page,
-                                               @RequestParam(defaultValue = "10") int size,
+    public Page<SummaryProductDto> getProducts(@PositiveOrZero @RequestParam(defaultValue = "0") int page,
+                                               @Positive @RequestParam(defaultValue = "10") int size,
                                                @RequestParam(required = false) String name) {
-        throw new UnsupportedOperationException();
+        return productService.getProducts(page, size, name);
     }
 
     @PostMapping
-    public ProductCreationResult createProduct(@RequestBody ProductCreationRequest request) {
-        throw new UnsupportedOperationException();
+    public DetailedProductDto createProduct(@Valid @RequestBody ProductCreationRequest request) {
+        return productService.createProduct(request);
     }
 
     @PutMapping("/{id}")
-    public ProductUpdateResult updateProduct(@PathVariable String id,
-                                             @RequestBody ProductUpdateRequest request) {
-        throw new UnsupportedOperationException();
+    public ProductUpdateResult updateProduct(@NotBlank @PathVariable String id,
+                                             @Valid @RequestBody ProductUpdateRequest request) {
+        return productService.updateProduct(id, request);
     }
 
-    @PutMapping("/{id}/status")
-    public ProductStatusUpdateResult updateProductStatus(@PathVariable String id,
-                                                         @RequestParam ProductStatus status) {
-        throw new UnsupportedOperationException();
+    @PutMapping("/{productId}/categories/{categoryId}/add")
+    public ProductUpdateResult addToCategory(@NotBlank @PathVariable String productId,
+                                             @NotBlank @PathVariable String categoryId) {
+        return productService.addToCategory(productId, categoryId);
+    }
+
+    @PutMapping("/{id}/categories/remove")
+    public ProductUpdateResult removeFromCategory(@NotBlank @PathVariable String id) {
+        return productService.removeFromCategory(id);
     }
 
     @DeleteMapping("/{id}")
-    public ProductDeletionResult deleteProduct(@PathVariable String id) {
-        throw new UnsupportedOperationException();
+    public ProductDeletionResult deleteProduct(@NotBlank @PathVariable String id) {
+        return productService.deleteProduct(id);
     }
 }

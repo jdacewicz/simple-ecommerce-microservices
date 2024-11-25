@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Validated
-@RequestMapping("/api/v1/products/categories")
+@RequestMapping("/api/v1/categories")
 public class CategoryRestControllerV1 {
 
     private final CategoryService categoryService;

@@ -1,5 +1,6 @@
 package dev.jakubdacewicz.product_service.stock.controller;
 
+import dev.jakubdacewicz.product_service.shared.types.StockStatus;
 import dev.jakubdacewicz.product_service.stock.StockService;
 import dev.jakubdacewicz.product_service.stock.dto.StockUpdateRequest;
 import dev.jakubdacewicz.product_service.stock.dto.StockUpdateResult;
@@ -19,5 +20,11 @@ public class StockRestControllerV1 {
     public StockUpdateResult updateStock(@PathVariable String id,
                                          @RequestBody StockUpdateRequest request) {
         return stockService.updateStock(id, request);
+    }
+
+    @PutMapping("/{id}/status")
+    public StockUpdateResult updateStockStatus(@PathVariable String id,
+                                               @RequestParam StockStatus status) {
+        return stockService.updateStockStatus(id, status);
     }
 }

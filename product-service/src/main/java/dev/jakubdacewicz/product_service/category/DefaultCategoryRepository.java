@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
 
@@ -71,9 +72,11 @@ interface MongoCategoryRepository extends MongoRepository<Category, String> {
     })
     long countByCategoryName(String categoryName);
 
+    @Query("{ '_id': ?0 }")
     @Update("{ $set: { 'name': ?1, 'description': ?2 } }")
     int updateNameAndDescription(String id, String name, String description);
 
+    @Query("{ '_id': ?0 }")
     @Update("{ $set: { 'enabled': ?1 } }")
     int updateEnabled(String id, boolean enabled);
 }

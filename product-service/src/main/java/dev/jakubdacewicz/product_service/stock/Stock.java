@@ -1,5 +1,6 @@
 package dev.jakubdacewicz.product_service.stock;
 
+import dev.jakubdacewicz.product_service.shared.types.StockStatus;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -27,6 +28,8 @@ public class Stock {
 
     private BigDecimal price;
 
+    private StockStatus stockStatus;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
@@ -40,6 +43,7 @@ public class Stock {
                  String productId,
                  int quantity,
                  BigDecimal price,
+                 StockStatus stockStatus,
                  LocalDateTime createdAt,
                  LocalDateTime updatedAt,
                  UUID businessKey) {
@@ -50,6 +54,7 @@ public class Stock {
         this.productId = productId;
         this.quantity = quantity;
         this.price = price;
+        this.stockStatus = stockStatus;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.businessKey = businessKey;
@@ -84,6 +89,10 @@ public class Stock {
         return price;
     }
 
+    public StockStatus getStockStatus() {
+        return stockStatus;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -110,6 +119,10 @@ public class Stock {
 
     void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    void setStockStatus(StockStatus stockStatus) {
+        this.stockStatus = stockStatus;
     }
 
     void setCreatedAt(LocalDateTime createdAt) {

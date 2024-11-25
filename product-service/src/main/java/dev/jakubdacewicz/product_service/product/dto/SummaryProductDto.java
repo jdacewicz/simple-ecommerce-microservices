@@ -1,8 +1,7 @@
 package dev.jakubdacewicz.product_service.product.dto;
 
 import dev.jakubdacewicz.product_service.category.dto.SummaryCategoryDto;
-
-import java.math.BigDecimal;
+import dev.jakubdacewicz.product_service.stock.dto.StockDto;
 
 public record SummaryProductDto(
 
@@ -14,7 +13,5 @@ public record SummaryProductDto(
 
         SummaryCategoryDto category,
 
-        BigDecimal price,
-
-        String status) {
+        StockDto stock) {
 }
