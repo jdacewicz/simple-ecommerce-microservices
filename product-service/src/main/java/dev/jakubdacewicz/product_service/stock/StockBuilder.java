@@ -1,5 +1,7 @@
 package dev.jakubdacewicz.product_service.stock;
 
+import dev.jakubdacewicz.product_service.shared.types.StockStatus;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -12,6 +14,8 @@ public class StockBuilder {
     private int quantity = 0;
 
     private BigDecimal price = BigDecimal.ZERO;
+
+    private StockStatus stockStatus = StockStatus.NOT_AVAILABLE;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -38,6 +42,11 @@ public class StockBuilder {
         return this;
     }
 
+    public StockBuilder stockStatus(StockStatus stockStatus) {
+        this.stockStatus = stockStatus;
+        return this;
+    }
+
     public StockBuilder createdAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
         return this;
@@ -54,6 +63,6 @@ public class StockBuilder {
     }
 
     public Stock build() {
-        return new Stock(id, productId, quantity, price, createdAt, updatedAt, businessKey);
+        return new Stock(id, productId, quantity, price, stockStatus, createdAt, updatedAt, businessKey);
     }
 }

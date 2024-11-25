@@ -1,7 +1,6 @@
 package dev.jakubdacewicz.product_service.product;
 
 import dev.jakubdacewicz.product_service.category.Category;
-import dev.jakubdacewicz.product_service.shared.types.ProductStatus;
 import dev.jakubdacewicz.product_service.stock.Stock;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -37,8 +36,6 @@ public class Product {
     @DocumentReference
     private Category category;
 
-    private ProductStatus status;
-
     @Indexed(unique = true)
     private UUID businessKey;
 
@@ -49,7 +46,6 @@ public class Product {
                    LocalDateTime createdAt,
                    LocalDateTime updatedAt,
                    Category category,
-                   ProductStatus status,
                    UUID businessKey) {
         this.id = id;
         this.name = name;
@@ -58,7 +54,6 @@ public class Product {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.category = category;
-        this.status = status;
         this.businessKey = businessKey;
     }
 
@@ -103,10 +98,6 @@ public class Product {
         return category;
     }
 
-    public ProductStatus getStatus() {
-        return status;
-    }
-
     public UUID getBusinessKey() {
         return businessKey;
     }
@@ -137,10 +128,6 @@ public class Product {
 
     void setCategory(Category category) {
         this.category = category;
-    }
-
-    void setStatus(ProductStatus status) {
-        this.status = status;
     }
 
     void setBusinessKey(UUID businessKey) {
