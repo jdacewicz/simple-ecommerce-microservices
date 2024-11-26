@@ -5,5 +5,6 @@ public record SummaryCategoryDto(
         String id,
 
         String name,
+
         String directory) {
 }

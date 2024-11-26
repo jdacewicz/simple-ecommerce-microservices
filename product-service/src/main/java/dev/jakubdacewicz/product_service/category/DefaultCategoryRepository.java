@@ -4,7 +4,6 @@ import dev.jakubdacewicz.product_service.shared.exception.DocumentNotFoundExcept
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.Update;
@@ -36,11 +35,6 @@ class DefaultCategoryRepository implements CategoryRepository {
     }
 
     @Override
-    public long countProducts(String name) {
-        return mongoCategoryRepository.countByCategoryName(name);
-    }
-
-    @Override
     public Category save(Category category) {
         return mongoCategoryRepository.save(category);
     }
@@ -56,6 +50,16 @@ class DefaultCategoryRepository implements CategoryRepository {
     }
 
     @Override
+    public boolean removeProductFromCategory(String categoryId, String productId) {
+        return mongoCategoryRepository.removeProductFromCategory(categoryId, productId) > 0;
+    }
+
+    @Override
+    public boolean addProductToCategory(String categoryId, String productId) {
+        return mongoCategoryRepository.addProductToCategory(categoryId, productId) > 0;
+    }
+
+    @Override
     public void delete(String id) {
         mongoCategoryRepository.deleteById(id);
     }
@@ -66,12 +70,6 @@ interface MongoCategoryRepository extends MongoRepository<Category, String> {
 
     Page<Category> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
-    @Aggregation(pipeline = {
-            "{ $match: { _id: ?0 } }",
-            "{ $project: { productCount: { $size: '$products' } } }"
-    })
-    long countByCategoryName(String categoryName);
-
     @Query("{ '_id': ?0 }")
     @Update("{ $set: { 'name': ?1, 'description': ?2 } }")
     int updateNameAndDescription(String id, String name, String description);
@@ -79,4 +77,12 @@ interface MongoCategoryRepository extends MongoRepository<Category, String> {
     @Query("{ '_id': ?0 }")
     @Update("{ $set: { 'enabled': ?1 } }")
     int updateEnabled(String id, boolean enabled);
+
+    @Query("{ '_id': ?0 }")
+    @Update("{ $addToSet: { 'products': ?1 } }")
+    int addProductToCategory(String categoryId, String productId);
+
+    @Query("{ '_id': ?0 }")
+    @Update("{ $pull: { 'products': ?1 } }")
+    int removeProductFromCategory(String categoryId, String productId);
 }

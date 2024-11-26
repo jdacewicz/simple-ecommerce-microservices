@@ -10,13 +10,15 @@ public interface CategoryRepository {
 
     Page<Category> findByNameContainingIgnoreCase(int page, int size, String name);
 
-    long countProducts(String name);
-
     Category save(Category category);
 
     boolean update(String id, String name, String description);
 
     boolean update(String id, boolean enabled);
+
+    boolean removeProductFromCategory(String categoryId, String productId);
+
+    boolean addProductToCategory(String categoryId, String productId);
 
     void delete(String id);
 }

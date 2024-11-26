@@ -21,5 +21,11 @@ public interface CategoryService {
     CategoryUpdateResult updateCategoryEnable(String id, boolean enabled);
 
     @Transactional
+    CategoryUpdateResult removeProductFromCategory(String categoryId, String productId);
+
+    @Transactional
+    CategoryUpdateResult addProductToCategory(String categoryId, String id);
+
+    @Transactional
     CategoryDeletionResult deleteCategory(String id);
 }

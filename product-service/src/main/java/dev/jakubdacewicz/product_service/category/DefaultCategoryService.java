@@ -35,8 +35,9 @@ class DefaultCategoryService implements CategoryService {
     public DetailedCategoryDto getCategoryDetails(String id) {
         logger.debug("Attempt to get '{}' detailed category", id);
 
-        long productCount = categoryRepository.countProducts(id);
         Category category = categoryRepository.findById(id);
+        long productCount = category.getProducts()
+                .size();
 
         logger.info("Successfully got '{}' detailed category", id);
         return categoryMapper.toDetailedDto(category, productCount);
@@ -86,6 +87,26 @@ class DefaultCategoryService implements CategoryService {
 
         logger.info("Successfully updated '{}' category enable status", id);
         return new CategoryUpdateResult(updatedCategory);
+    }
+
+    @Override
+    public CategoryUpdateResult removeProductFromCategory(String categoryId, String productId) {
+        logger.debug("Attempt to remove '{}' product from '{}' category", productId, categoryId);
+
+        boolean productRemovedFromCategory = categoryRepository.removeProductFromCategory(categoryId, productId);
+
+        logger.info("Successfully removed '{}' product from '{}' category", productId, categoryId);
+        return new CategoryUpdateResult(productRemovedFromCategory);
+    }
+
+    @Override
+    public CategoryUpdateResult addProductToCategory(String categoryId, String id) {
+        logger.debug("Attempt to add '{}' product to '{}' category", id, categoryId);
+
+        boolean productAddedToCategory = categoryRepository.addProductToCategory(categoryId, id);
+
+        logger.info("Successfully added '{}' product to '{}' category", id, categoryId);
+        return new CategoryUpdateResult(productAddedToCategory);
     }
 
     @Override

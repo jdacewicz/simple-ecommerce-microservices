@@ -11,5 +11,6 @@ public record CategoryUpdateRequest(
         String name,
 
         @NotNull
+        @Size(max = 255)
         String description) {
 }
