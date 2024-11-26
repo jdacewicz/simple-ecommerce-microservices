@@ -39,7 +39,7 @@ public class ProductRestControllerV1 {
     }
 
     @PostMapping
-    public DetailedProductDto createProduct(@Valid @RequestBody ProductCreationRequest request) {
+    public SummaryProductDto createProduct(@Valid @RequestBody ProductCreationRequest request) {
         return productService.createProduct(request);
     }
 
@@ -50,13 +50,13 @@ public class ProductRestControllerV1 {
     }
 
     @PutMapping("/{productId}/categories/{categoryId}/add")
-    public ProductUpdateResult addToCategory(@NotBlank @PathVariable String productId,
-                                             @NotBlank @PathVariable String categoryId) {
+    public ProductCategoryUpdateResult addToCategory(@NotBlank @PathVariable String productId,
+                                                     @NotBlank @PathVariable String categoryId) {
         return productService.addToCategory(productId, categoryId);
     }
 
     @PutMapping("/{id}/categories/remove")
-    public ProductUpdateResult removeFromCategory(@NotBlank @PathVariable String id) {
+    public ProductCategoryUpdateResult removeFromCategory(@NotBlank @PathVariable String id) {
         return productService.removeFromCategory(id);
     }
 

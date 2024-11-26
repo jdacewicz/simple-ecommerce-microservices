@@ -12,16 +12,17 @@ public interface ProductService {
 
     Page<SummaryProductDto> getProducts(int page, int size, String name);
 
-    DetailedProductDto createProduct(ProductCreationRequest request);
+    @Transactional
+    SummaryProductDto createProduct(ProductCreationRequest request);
 
     @Transactional
     ProductUpdateResult updateProduct(String id, ProductUpdateRequest request);
 
     @Transactional
-    ProductUpdateResult addToCategory(String id, String categoryId);
+    ProductCategoryUpdateResult addToCategory(String id, String categoryId);
 
     @Transactional
-    ProductUpdateResult removeFromCategory(String id);
+    ProductCategoryUpdateResult removeFromCategory(String id);
 
     @Transactional
     ProductDeletionResult deleteProduct(String id);

@@ -24,7 +24,7 @@ public class GlobalRestControllerAdvice {
 
     @ExceptionHandler({HttpMessageNotReadableException.class, CategoryAssignedException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
+    public ApiError handleHttpMessageNotReadableException(Exception exception) {
         return new ApiError(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
     }
 

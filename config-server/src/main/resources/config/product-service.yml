@@ -7,3 +7,7 @@ eureka:
       defaultZone: http://service-registry:8761/eureka/
   instance:
     hostname: product-service
+
+spring:
+  jackson:
+    default-property-inclusion: non_null

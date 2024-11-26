@@ -6,8 +6,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -24,7 +24,7 @@ public class Product {
 
     private String description;
 
-    @DocumentReference
+    @DBRef(lazy = true)
     private Stock stock;
 
     @CreatedDate
@@ -33,7 +33,7 @@ public class Product {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @DocumentReference
+    @DBRef(lazy = true)
     private Category category;
 
     @Indexed(unique = true)
