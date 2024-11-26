@@ -18,6 +18,11 @@ class DefaultStockRepository implements StockRepository {
     }
 
     @Override
+    public Stock save(Stock stock) {
+        return mongoStockRepository.save(stock);
+    }
+
+    @Override
     public boolean updatePriceAndQuantity(String id, BigDecimal price, int quantity) {
         return mongoStockRepository.updatePriceAndQuantity(id, price, quantity) > 0;
     }

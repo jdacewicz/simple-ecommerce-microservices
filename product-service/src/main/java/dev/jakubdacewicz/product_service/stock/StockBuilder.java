@@ -9,7 +9,6 @@ import java.util.UUID;
 public class StockBuilder {
 
     private String id;
-    private String productId;
 
     private int quantity = 0;
 
@@ -24,11 +23,6 @@ public class StockBuilder {
 
     public StockBuilder id(String id) {
         this.id = id;
-        return this;
-    }
-
-    public StockBuilder productId(String productId) {
-        this.productId = productId;
         return this;
     }
 
@@ -63,6 +57,6 @@ public class StockBuilder {
     }
 
     public Stock build() {
-        return new Stock(id, productId, quantity, price, stockStatus, createdAt, updatedAt, businessKey);
+        return new Stock(id, quantity, price, stockStatus, createdAt, updatedAt, businessKey);
     }
 }

@@ -1,14 +1,16 @@
 package dev.jakubdacewicz.product_service.stock.dto;
 
+import dev.jakubdacewicz.product_service.shared.types.StockStatus;
+
 import java.math.BigDecimal;
 
 public record StockDto(
 
         String id,
 
-        String productId,
-
         int quantity,
 
-        BigDecimal price) {
+        BigDecimal price,
+
+        StockStatus status) {
 }

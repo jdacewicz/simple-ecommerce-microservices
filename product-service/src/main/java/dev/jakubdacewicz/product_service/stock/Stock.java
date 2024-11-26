@@ -12,17 +12,11 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-import static dev.jakubdacewicz.product_service.stock.StockValidator.validatePrice;
-import static dev.jakubdacewicz.product_service.stock.StockValidator.validateQuantity;
-
 @Document(collection = "stocks")
 public class Stock {
 
     @Id
     private String id;
-
-    @Indexed(unique = true)
-    private String productId;
 
     private int quantity;
 
@@ -40,18 +34,13 @@ public class Stock {
     private UUID businessKey;
 
     public Stock(String id,
-                 String productId,
                  int quantity,
                  BigDecimal price,
                  StockStatus stockStatus,
                  LocalDateTime createdAt,
                  LocalDateTime updatedAt,
                  UUID businessKey) {
-        validatePrice(price);
-        validateQuantity(quantity);
-
         this.id = id;
-        this.productId = productId;
         this.quantity = quantity;
         this.price = price;
         this.stockStatus = stockStatus;
@@ -75,10 +64,6 @@ public class Stock {
 
     public String getId() {
         return id;
-    }
-
-    public String getProductId() {
-        return productId;
     }
 
     public int getQuantity() {
@@ -107,10 +92,6 @@ public class Stock {
 
     void setId(String id) {
         this.id = id;
-    }
-
-    void setProductId(String productId) {
-        this.productId = productId;
     }
 
     void setQuantity(int quantity) {

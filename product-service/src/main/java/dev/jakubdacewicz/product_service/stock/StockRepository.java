@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 
 public interface StockRepository {
 
+    Stock save(Stock stock);
+
     boolean updatePriceAndQuantity(String id, BigDecimal price, int quantity);
 
     boolean updatePriceAndQuantityAndStatus(String id, BigDecimal price, int quantity, StockStatus stockStatus);

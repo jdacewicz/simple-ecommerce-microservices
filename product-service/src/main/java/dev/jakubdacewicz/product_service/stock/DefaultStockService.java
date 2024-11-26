@@ -1,9 +1,7 @@
 package dev.jakubdacewicz.product_service.stock;
 
 import dev.jakubdacewicz.product_service.shared.types.StockStatus;
-import dev.jakubdacewicz.product_service.stock.dto.StockDeleteResult;
-import dev.jakubdacewicz.product_service.stock.dto.StockUpdateRequest;
-import dev.jakubdacewicz.product_service.stock.dto.StockUpdateResult;
+import dev.jakubdacewicz.product_service.stock.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,13 +13,38 @@ class DefaultStockService implements StockService {
 
     private final StockRepository stockRepository;
 
-    DefaultStockService(StockRepository stockRepository) {
+    private final StockMapper stockMapper;
+
+    private final StockValidator stockValidator;
+
+    DefaultStockService(StockRepository stockRepository,
+                        StockMapper stockMapper,
+                        StockValidator stockValidator) {
         this.stockRepository = stockRepository;
+        this.stockMapper = stockMapper;
+        this.stockValidator = stockValidator;
+    }
+
+    @Override
+    public StockDto createStock(StockCreationRequest request) {
+        logger.debug("Attempt to create stock");
+
+        stockValidator.validatePrice(request.price());
+        stockValidator.validateQuantity(request.quantity());
+
+        Stock stock = stockMapper.toStock(request);
+        Stock newStock = stockRepository.save(stock);
+
+        logger.info("Successfully created stock");
+        return stockMapper.toDto(newStock);
     }
 
     @Override
     public StockUpdateResult updateStock(String id, StockUpdateRequest request) {
         logger.debug("Attempt to update '{}' stock", id);
+
+        stockValidator.validatePrice(request.price());
+        stockValidator.validateQuantity(request.quantity());
 
         boolean updatedStock;
         if (request.quantity() < 1) {
