@@ -12,9 +12,7 @@ services:
       retries: 5
       start_period: 2s
     networks:
-      microservices:
-        aliases:
-          - "config-server"
+      - microservices
 
   service-registry:
     build:
@@ -34,9 +32,7 @@ services:
       config-server:
         condition: service_healthy
     networks:
-      microservices:
-        aliases:
-          - "service-registry"
+      - microservices
 
   api-gateway:
     build:
@@ -50,9 +46,7 @@ services:
       service-registry:
         condition: service_healthy
     networks:
-      microservices:
-        aliases:
-          - "api-gateway"
+      - microservices
 
   products-mongodb:
     image: "mongo:8.0.3"
@@ -68,15 +62,13 @@ services:
       retries: 5
       start_period: 2s
     networks:
-      microservices:
-        aliases:
-          - "products-mongodb"
+      - microservices
 
   carts-mongodb:
     image: "mongo:8.0.3"
     container_name: carts-mongodb
     ports:
-      - "27018:27018"
+      - "27018:27017"
     volumes:
       - carts-mongodb:/data/db
     healthcheck:
@@ -86,9 +78,7 @@ services:
       retries: 5
       start_period: 2s
     networks:
-      microservices:
-        aliases:
-          - "carts-mongodb"
+      - microservices
 
   orders-postgresql:
     image: "postgres:16.0-alpine"
@@ -108,9 +98,7 @@ services:
       retries: 5
       start_period: 2s
     networks:
-      microservices:
-        aliases:
-          - "orders-postgresql"
+      - microservices
 
   product-service:
     build:
@@ -130,9 +118,7 @@ services:
       - "SPRING_DATA_MONGODB_HOST=products-mongodb"
       - "SPRING_DATA_MONGODB_PORT=27017"
     networks:
-      microservices:
-        aliases:
-          - "product-service"
+      - microservices
 
   order-service:
     build:
@@ -152,9 +138,7 @@ services:
       - "SPRING_DATASOURCE_USERNAME=orders_user"
       - "SPRING_DATASOURCE_PASSWORD=orders_password"
     networks:
-      microservices:
-        aliases:
-          - "order-service"
+      - microservices
 
   cart-service:
     build:
@@ -172,11 +156,9 @@ services:
     environment:
       - "SPRING_DATA_MONGODB_DATABASE=carts"
       - "SPRING_DATA_MONGODB_HOST=carts-mongodb"
-      - "SPRING_DATA_MONGODB_PORT=27018"
+      - "SPRING_DATA_MONGODB_PORT=27017"
     networks:
-      microservices:
-        aliases:
-          - "cart-service"
+      - microservices
 
 volumes:
   products-mongodb:
