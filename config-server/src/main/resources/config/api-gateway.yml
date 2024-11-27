@@ -9,20 +9,22 @@ eureka:
 spring:
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lowerCaseServiceId: true
       routes:
         - id: product-service
-          uri: lb://product-service
+          uri: lb://PRODUCT-SERVICE
           predicates:
-            - Path=/api/v1/products/**
-        - id: order-service
-          uri: lb://order-service
-          predicates:
-            - Path=/api/v1/orders/**
+            - Path=/api/v1/product/**
+          filters:
+            - RewritePath=/api/v1/product/(?<remaining>.*), /api/v1/${remaining}
         - id: cart-service
-          uri: lb://cart-service
+          uri: lb://CART-SERVICE
           predicates:
-            - Path=/api/v1/carts/**
+            - Path=/api/v1/cart/**
+          filters:
+            - RewritePath=/api/v1/cart/(?<remaining>.*), /api/v1/${remaining}
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/api/v1/order/**
+          filters:
+            - RewritePath=/api/v1/order/(?<remaining>.*), /api/v1/${remaining}
