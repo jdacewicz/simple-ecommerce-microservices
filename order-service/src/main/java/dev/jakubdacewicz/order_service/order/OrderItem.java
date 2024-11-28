@@ -27,9 +27,17 @@ public class OrderItem {
     @Column(nullable = false)
     private String name;
 
+    @AttributeOverrides({
+            @AttributeOverride(name = "price", column = @Column(name = "unit_price")),
+            @AttributeOverride(name = "quantity", column = @Column(name = "unit_quantity"))
+    })
     @Column(nullable = false)
     private MonetaryAmount unitMonetaryAmount;
 
+    @AttributeOverrides({
+            @AttributeOverride(name = "price", column = @Column(name = "total_price")),
+            @AttributeOverride(name = "quantity", column = @Column(name = "total_quantity"))
+    })
     @Column(nullable = false)
     private MonetaryAmount totalMonetaryAmount;
 
