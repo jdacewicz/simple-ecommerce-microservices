@@ -1,13 +1,20 @@
 package dev.jakubdacewicz.cart_service.cart.controller;
 
-import dev.jakubdacewicz.cart_service.dto.CartDeletionResult;
-import dev.jakubdacewicz.cart_service.dto.DetailedCartDto;
-import dev.jakubdacewicz.cart_service.dto.SummaryCartDto;
+import dev.jakubdacewicz.cart_service.cart.CartService;
+import dev.jakubdacewicz.cart_service.cart.dto.CartDeletionResult;
+import dev.jakubdacewicz.cart_service.cart.dto.DetailedCartDto;
+import dev.jakubdacewicz.cart_service.cart.dto.SummaryCartDto;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/carts")
 public class CartRestControllerV1 {
+
+    private final CartService cartService;
+
+    CartRestControllerV1(CartService cartService) {
+        this.cartService = cartService;
+    }
 
     @GetMapping("/{id}")
     public SummaryCartDto getCart(@PathVariable String id) {
@@ -21,7 +28,7 @@ public class CartRestControllerV1 {
 
     @PostMapping
     public SummaryCartDto createCart() {
-        throw new UnsupportedOperationException();
+        return cartService.createCart();
     }
 
     @PutMapping("/{cartId}/items/{itemId}/add")

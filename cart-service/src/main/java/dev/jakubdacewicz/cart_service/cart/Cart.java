@@ -42,6 +42,12 @@ public class Cart {
         this.businessKey = businessKey;
     }
 
+    public int getTotalQuantity() {
+        return cartItems.stream()
+                .mapToInt(CartItem::getQuantity)
+                .sum();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -1,4 +1,4 @@
-package dev.jakubdacewicz.cart_service.dto;
+package dev.jakubdacewicz.cart_service.cart.dto;
 
 public record CartDeletionResult(
 
