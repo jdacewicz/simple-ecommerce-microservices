@@ -157,6 +157,7 @@ services:
       - "SPRING_DATA_MONGODB_DATABASE=carts"
       - "SPRING_DATA_MONGODB_HOST=carts-mongodb"
       - "SPRING_DATA_MONGODB_PORT=27017"
+      - "PRODUCT-SERVICE_URL=http://product-service:8081"
     networks:
       - microservices
 
