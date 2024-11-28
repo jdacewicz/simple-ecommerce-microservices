@@ -7,4 +7,6 @@ public interface CartRepository {
     Cart save(Cart cart);
 
     boolean addItem(String cartId, String itemId);
+
+    boolean removeItem(String cartId, String itemId);
 }

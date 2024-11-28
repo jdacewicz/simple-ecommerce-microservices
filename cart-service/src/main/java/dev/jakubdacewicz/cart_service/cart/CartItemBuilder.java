@@ -7,6 +7,7 @@ public class CartItemBuilder {
 
     private String id;
 
+    private String cartId;
     private String productId;
 
     private int quantity = 0;
@@ -18,6 +19,11 @@ public class CartItemBuilder {
 
     public CartItemBuilder id(String id) {
         this.id = id;
+        return this;
+    }
+
+    public CartItemBuilder cartId(String cartId) {
+        this.cartId = cartId;
         return this;
     }
 
@@ -47,6 +53,6 @@ public class CartItemBuilder {
     }
 
     public CartItem build() {
-        return new CartItem(id, productId, quantity, createdAt, updatedAt, businessKey);
+        return new CartItem(id, cartId, productId, quantity, createdAt, updatedAt, businessKey);
     }
 }

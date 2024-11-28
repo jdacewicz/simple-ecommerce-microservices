@@ -1,10 +1,7 @@
 package dev.jakubdacewicz.cart_service.cart.controller;
 
 import dev.jakubdacewicz.cart_service.cart.CartService;
-import dev.jakubdacewicz.cart_service.cart.dto.CartDeletionResult;
-import dev.jakubdacewicz.cart_service.cart.dto.CartProductInsertionResult;
-import dev.jakubdacewicz.cart_service.cart.dto.DetailedCartDto;
-import dev.jakubdacewicz.cart_service.cart.dto.SummaryCartDto;
+import dev.jakubdacewicz.cart_service.cart.dto.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,9 +37,9 @@ public class CartRestControllerV1 {
     }
 
     @PutMapping("/{cartId}/products/{productId}/remove")
-    public SummaryCartDto removeProductsFromCart(@PathVariable String cartId,
-                                                 @PathVariable String productId,
-                                                 @RequestParam int quantity) {
+    public CartProductRemovalResult removeProductsFromCart(@PathVariable String cartId,
+                                                           @PathVariable String productId,
+                                                           @RequestParam int quantity) {
         return cartService.removeProductsFromCart(cartId, productId, quantity);
     }
 

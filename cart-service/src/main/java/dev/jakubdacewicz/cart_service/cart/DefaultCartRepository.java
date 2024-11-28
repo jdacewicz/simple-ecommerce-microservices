@@ -30,6 +30,11 @@ class DefaultCartRepository implements CartRepository {
     public boolean addItem(String cartId, String itemId) {
         return mongoCartRepository.addItemToCart(cartId, itemId) > 0;
     }
+
+    @Override
+    public boolean removeItem(String cartId, String itemId) {
+        return mongoCartRepository.removeItemFromCart(cartId, itemId) > 0;
+    }
 }
 
 @Repository

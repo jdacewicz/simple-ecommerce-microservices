@@ -1,12 +1,15 @@
 package dev.jakubdacewicz.cart_service.cart;
 
 import dev.jakubdacewicz.cart_service.cart.dto.CartProductInsertionResult;
+import dev.jakubdacewicz.cart_service.cart.dto.CartProductRemovalResult;
 import dev.jakubdacewicz.cart_service.cart.dto.SummaryCartDto;
+import dev.jakubdacewicz.cart_service.shared.exception.DocumentNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 class DefaultCartService implements CartService {
@@ -56,7 +59,10 @@ class DefaultCartService implements CartService {
 
         //Fetch check product exists
 
+        Cart cart = cartRepository.findById(cartId);
+
         CartItem cartItem = new CartItemBuilder()
+                .cartId(cart.getId())
                 .productId(productId)
                 .quantity(quantity)
                 .build();
@@ -69,7 +75,42 @@ class DefaultCartService implements CartService {
     }
 
     @Override
-    public SummaryCartDto removeProductsFromCart(String cartId, String productId, int quantity) {
-        return null;
+    public CartProductRemovalResult removeProductsFromCart(String cartId, String productId, int quantity) {
+        logger.debug("Attempt to remove '{}' product of quantity {} from '{}' cart", productId, quantity, cartId);
+
+        CartItem firstCartItem = getFirstCartItem(cartId, productId);
+        firstCartItem.subtractQuantity(quantity);
+
+        if (firstCartItem.getQuantity() > 0) {
+            return updateQuantityOfCartItem(cartId, productId, quantity, firstCartItem);
+        } else {
+            return deleteCartItem(cartId, productId, firstCartItem);
+        }
+    }
+
+    private CartItem getFirstCartItem(String cartId, String productId) {
+        List<CartItem> cartItems = cartItemRepository.findByCartIdAndProductId(cartId, productId);
+        if (cartItems.isEmpty()) {
+            logger.info("Could not find product with id: {} in cart with id: {}", productId, cartId);
+            throw new DocumentNotFoundException("Could not find product with id: " + productId
+                    + " in cart with id: " + cartId);
+        }
+        return cartItems.getFirst();
+    }
+
+    private CartProductRemovalResult updateQuantityOfCartItem(String cartId, String productId,
+                                                              int quantity, CartItem firstCartItem) {
+        cartItemRepository.save(firstCartItem);
+
+        logger.info("Successfully removed '{}' product of quantity {} from '{}' cart", productId, quantity, cartId);
+        return new CartProductRemovalResult(true, false);
+    }
+
+    private CartProductRemovalResult deleteCartItem(String cartId, String productId, CartItem firstCartItem) {
+        boolean productRemoved = cartRepository.removeItem(cartId, firstCartItem.getId());
+        cartItemRepository.deleteById(firstCartItem.getId());
+
+        logger.info("Successfully removed all '{}' product from '{}' cart", productId, cartId);
+        return new CartProductRemovalResult(false, productRemoved);
     }
 }
