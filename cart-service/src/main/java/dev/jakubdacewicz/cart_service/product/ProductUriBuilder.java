@@ -5,11 +5,13 @@ import org.springframework.stereotype.Component;
 @Component
 class ProductUriBuilder {
 
+    private static final String API_PREFIX = "/api/v1";
+
     String buildSingleProductUri(String productId) {
-        return "/products/" + productId + "/price";
+        return API_PREFIX + "/products/" + productId;
     }
 
     String buildMultipleProductUri() {
-        return "/products/price";
+        return API_PREFIX + "/products/list";
     }
 }

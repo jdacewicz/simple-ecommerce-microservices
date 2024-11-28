@@ -52,6 +52,6 @@ class CartMapper {
 
     Map<String, BigDecimal> toPriceMap(List<Product> products) {
         return products.stream()
-                .collect(Collectors.toMap(Product::id, Product::price));
+                .collect(Collectors.toMap(Product::id, product -> product.stock().price()));
     }
 }
