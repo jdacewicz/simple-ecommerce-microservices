@@ -4,6 +4,8 @@ import dev.jakubdacewicz.product_service.product.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 public interface ProductService {
 
     SummaryProductDto getProduct(String id);
@@ -11,6 +13,8 @@ public interface ProductService {
     DetailedProductDto getProductDetails(String id);
 
     Page<SummaryProductDto> getProducts(int page, int size, String name);
+
+    List<SummaryProductDto> getProductsList(List<String> ids);
 
     @Transactional
     SummaryProductDto createProduct(ProductCreationRequest request);

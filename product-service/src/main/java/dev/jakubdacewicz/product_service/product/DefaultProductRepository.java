@@ -9,6 +9,8 @@ import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 class DefaultProductRepository implements ProductRepository {
 
@@ -27,6 +29,11 @@ class DefaultProductRepository implements ProductRepository {
     @Override
     public Page<Product> findAll(int page, int size) {
         return mongoProductRepository.findAll(PageRequest.of(page, size));
+    }
+
+    @Override
+    public List<Product> findAll(List<String> ids) {
+        return mongoProductRepository.findByIdIn(ids);
     }
 
     @Override
@@ -62,6 +69,8 @@ class DefaultProductRepository implements ProductRepository {
 
 @Repository
 interface MongoProductRepository extends MongoRepository<Product, String> {
+
+    List<Product> findByIdIn(List<String> ids);
 
     Page<Product> findByNameContainingIgnoreCase(String name, Pageable pageable);
 

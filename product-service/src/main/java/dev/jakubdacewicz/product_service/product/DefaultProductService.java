@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 class DefaultProductService implements ProductService {
 
@@ -67,6 +69,16 @@ class DefaultProductService implements ProductService {
 
         logger.info("Successfully got {} products at page {}", products.getNumberOfElements(), page);
         return products.map(productMapper::toSummaryDto);
+    }
+
+    @Override
+    public List<SummaryProductDto> getProductsList(List<String> ids) {
+        logger.debug("Attempt to get all products list");
+
+        List<Product> products = productRepository.findAll(ids);
+
+        logger.info("Successfully got {} products list", products.size());
+        return productMapper.toSummaryDtoList(products);
     }
 
     @Override

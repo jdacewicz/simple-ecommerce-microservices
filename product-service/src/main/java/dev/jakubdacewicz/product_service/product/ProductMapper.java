@@ -11,6 +11,8 @@ import dev.jakubdacewicz.product_service.stock.dto.StockCreationRequest;
 import dev.jakubdacewicz.product_service.stock.dto.StockDto;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 class ProductMapper {
 
@@ -73,5 +75,11 @@ class ProductMapper {
     ProductCategoryUpdateResult toProductCategoryUpdateResult(CategoryUpdateResult categoryUpdateResult,
                                                               boolean productUpdated) {
         return new ProductCategoryUpdateResult(categoryUpdateResult.categoryUpdated(), productUpdated);
+    }
+
+    List<SummaryProductDto> toSummaryDtoList(List<Product> products) {
+        return products.stream()
+                .map(this::toSummaryDto)
+                .toList();
     }
 }

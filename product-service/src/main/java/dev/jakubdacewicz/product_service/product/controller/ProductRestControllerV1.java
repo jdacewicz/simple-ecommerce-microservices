@@ -4,11 +4,14 @@ import dev.jakubdacewicz.product_service.product.ProductService;
 import dev.jakubdacewicz.product_service.product.dto.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Validated
@@ -36,6 +39,11 @@ public class ProductRestControllerV1 {
                                                @Positive @RequestParam(defaultValue = "10") int size,
                                                @RequestParam(required = false) String name) {
         return productService.getProducts(page, size, name);
+    }
+
+    @GetMapping("/list")
+    public List<SummaryProductDto> getProducts(@NotNull @RequestParam List<String> ids) {
+        return productService.getProductsList(ids);
     }
 
     @PostMapping
