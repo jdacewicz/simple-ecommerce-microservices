@@ -16,8 +16,6 @@ public class CartItem {
     @Id
     private String id;
 
-    private String cartId;
-
     private String productId;
 
     private int quantity;
@@ -32,14 +30,12 @@ public class CartItem {
     private UUID businessKey;
 
     public CartItem(String id,
-                    String cartId,
                     String productId,
                     int quantity,
                     LocalDateTime createdAt,
                     LocalDateTime updatedAt,
                     UUID businessKey) {
         this.id = id;
-        this.cartId = cartId;
         this.productId = productId;
         this.quantity = quantity;
         this.createdAt = createdAt;
@@ -64,10 +60,6 @@ public class CartItem {
         return id;
     }
 
-    public String getCartId() {
-        return cartId;
-    }
-
     public String getProductId() {
         return productId;
     }
@@ -90,10 +82,6 @@ public class CartItem {
 
     void setId(String id) {
         this.id = id;
-    }
-
-    void setCartId(String cartId) {
-        this.cartId = cartId;
     }
 
     void setProductId(String productId) {

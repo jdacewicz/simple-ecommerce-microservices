@@ -2,6 +2,7 @@ package dev.jakubdacewicz.cart_service.cart.controller;
 
 import dev.jakubdacewicz.cart_service.cart.CartService;
 import dev.jakubdacewicz.cart_service.cart.dto.CartDeletionResult;
+import dev.jakubdacewicz.cart_service.cart.dto.CartProductInsertionResult;
 import dev.jakubdacewicz.cart_service.cart.dto.DetailedCartDto;
 import dev.jakubdacewicz.cart_service.cart.dto.SummaryCartDto;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class CartRestControllerV1 {
 
     @GetMapping("/{id}")
     public SummaryCartDto getCart(@PathVariable String id) {
-        throw new UnsupportedOperationException();
+        return cartService.getCart(id);
     }
 
     @GetMapping("/{id}/details")
@@ -31,18 +32,18 @@ public class CartRestControllerV1 {
         return cartService.createCart();
     }
 
-    @PutMapping("/{cartId}/items/{itemId}/add")
-    public SummaryCartDto addItemsToCart(@PathVariable String cartId,
-                                         @PathVariable String itemId,
-                                         @RequestParam int quantity) {
-        throw new UnsupportedOperationException();
+    @PutMapping("/{cartId}/products/{productId}/add")
+    public CartProductInsertionResult addProductsToCart(@PathVariable String cartId,
+                                                        @PathVariable String productId,
+                                                        @RequestParam int quantity) {
+        return cartService.addProductsToCart(cartId, productId, quantity);
     }
 
-    @PutMapping("/{cartId}/items/{itemId}/remove")
-    public SummaryCartDto removeItemsFromCart(@PathVariable String cartId,
-                                              @PathVariable String itemId,
-                                              @RequestParam int quantity) {
-        throw new UnsupportedOperationException();
+    @PutMapping("/{cartId}/products/{productId}/remove")
+    public SummaryCartDto removeProductsFromCart(@PathVariable String cartId,
+                                                 @PathVariable String productId,
+                                                 @RequestParam int quantity) {
+        return cartService.removeProductsFromCart(cartId, productId, quantity);
     }
 
     @DeleteMapping("/{id}")
