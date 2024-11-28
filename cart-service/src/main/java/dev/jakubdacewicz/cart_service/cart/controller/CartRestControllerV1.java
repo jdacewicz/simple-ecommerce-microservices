@@ -21,7 +21,7 @@ public class CartRestControllerV1 {
 
     @GetMapping("/{id}/details")
     public DetailedCartDto getDetailedCart(@PathVariable String id) {
-        throw new UnsupportedOperationException();
+        return cartService.getDetailedCart(id);
     }
 
     @PostMapping

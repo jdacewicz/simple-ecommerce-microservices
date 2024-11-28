@@ -8,8 +8,8 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 
 @Document(collection = "carts")
@@ -19,7 +19,7 @@ public class Cart {
     private String id;
 
     @DBRef(lazy = true)
-    private Set<CartItem> cartItems;
+    private List<CartItem> cartItems;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -31,7 +31,7 @@ public class Cart {
     private UUID businessKey;
 
     public Cart(String id,
-                Set<CartItem> cartItems,
+                List<CartItem> cartItems,
                 LocalDateTime createdAt,
                 LocalDateTime updatedAt,
                 UUID businessKey) {
@@ -65,7 +65,7 @@ public class Cart {
         return id;
     }
 
-    public Set<CartItem> getCartItems() {
+    public List<CartItem> getCartItems() {
         return cartItems;
     }
 
@@ -85,7 +85,7 @@ public class Cart {
         this.id = id;
     }
 
-    void setCartItems(Set<CartItem> cartItems) {
+    void setCartItems(List<CartItem> cartItems) {
         this.cartItems = cartItems;
     }
 

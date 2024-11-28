@@ -1,15 +1,13 @@
 package dev.jakubdacewicz.cart_service.cart;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class CartBuilder {
 
     private String id;
 
-    private Set<CartItem> cartItems = new HashSet<>();
+    private List<CartItem> cartItems = new LinkedList<>();
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -21,7 +19,7 @@ public class CartBuilder {
         return this;
     }
 
-    public CartBuilder cartItems(Set<CartItem> cartItems) {
+    public CartBuilder cartItems(List<CartItem> cartItems) {
         this.cartItems = cartItems;
         return this;
     }

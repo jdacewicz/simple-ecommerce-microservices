@@ -2,12 +2,15 @@ package dev.jakubdacewicz.cart_service.cart;
 
 import dev.jakubdacewicz.cart_service.cart.dto.CartProductInsertionResult;
 import dev.jakubdacewicz.cart_service.cart.dto.CartProductRemovalResult;
+import dev.jakubdacewicz.cart_service.cart.dto.DetailedCartDto;
 import dev.jakubdacewicz.cart_service.cart.dto.SummaryCartDto;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface CartService {
 
     SummaryCartDto getCart(String id);
+
+    DetailedCartDto getDetailedCart(String id);
 
     @Transactional
     SummaryCartDto createCart();

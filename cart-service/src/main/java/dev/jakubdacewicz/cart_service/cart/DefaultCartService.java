@@ -2,7 +2,10 @@ package dev.jakubdacewicz.cart_service.cart;
 
 import dev.jakubdacewicz.cart_service.cart.dto.CartProductInsertionResult;
 import dev.jakubdacewicz.cart_service.cart.dto.CartProductRemovalResult;
+import dev.jakubdacewicz.cart_service.cart.dto.DetailedCartDto;
 import dev.jakubdacewicz.cart_service.cart.dto.SummaryCartDto;
+import dev.jakubdacewicz.cart_service.product.dto.Product;
+import dev.jakubdacewicz.cart_service.product.ProductService;
 import dev.jakubdacewicz.cart_service.shared.exception.DocumentNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Service
 class DefaultCartService implements CartService {
@@ -21,24 +25,52 @@ class DefaultCartService implements CartService {
 
     private final CartMapper cartMapper;
 
+    private final CartCalculator cartCalculator;
+
+    private final ProductService productService;
+
     DefaultCartService(CartRepository cartRepository,
                        CartItemRepository cartItemRepository,
-                       CartMapper cartMapper) {
+                       CartMapper cartMapper,
+                       CartCalculator cartCalculator,
+                       ProductService productService) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.cartMapper = cartMapper;
+        this.cartCalculator = cartCalculator;
+        this.productService = productService;
     }
 
     @Override
     public SummaryCartDto getCart(String id) {
-        logger.debug("Attempt to get '{}' cart", id);
+        logger.debug("Attempt to get '{}' summary cart", id);
 
         Cart cart = cartRepository.findById(id);
-        //Fetch total price from product service
-        BigDecimal totalPrice = BigDecimal.ZERO;
 
-        logger.info("Successfully got '{}' cart", id);
+        List<String> productIds = cartMapper.toProductIds(cart.getCartItems());
+        List<Product> products = productService.fetchProducts(productIds);
+
+        Map<String, BigDecimal> productPrices = cartMapper.toPriceMap(products);
+        BigDecimal totalPrice = cartCalculator.calculateTotalPrice(cart.getCartItems(), productPrices);
+
+        logger.info("Successfully got '{}' summary cart", id);
         return cartMapper.toSummaryCartDto(cart, totalPrice);
+    }
+
+    @Override
+    public DetailedCartDto getDetailedCart(String id) {
+        logger.debug("Attempt to get '{}' detailed cart", id);
+
+        Cart cart = cartRepository.findById(id);
+
+        List<String> productIds = cartMapper.toProductIds(cart.getCartItems());
+        List<Product> products = productService.fetchProducts(productIds);
+
+        Map<String, BigDecimal> productPrices = cartMapper.toPriceMap(products);
+        BigDecimal totalPrice = cartCalculator.calculateTotalPrice(cart.getCartItems(), productPrices);
+
+        logger.info("Successfully got '{}' detailed cart", id);
+        return cartMapper.toDetailedCartDto(cart, productPrices, totalPrice);
     }
 
     @Override
@@ -57,7 +89,7 @@ class DefaultCartService implements CartService {
     public CartProductInsertionResult addProductsToCart(String cartId, String productId, int quantity) {
         logger.debug("Attempt to add '{}' product of quantity {} to '{}' cart", productId, quantity, cartId);
 
-        //Fetch check product exists
+        productService.validateProductExists(productId);
 
         Cart cart = cartRepository.findById(cartId);
 

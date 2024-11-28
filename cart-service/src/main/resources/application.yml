@@ -3,3 +3,6 @@ spring:
     name: cart-service
   config:
     import: "optional:configserver:http://config-server:8088"
+
+product-service:
+  url: ${PRODUCT-SERVICE_URL}
