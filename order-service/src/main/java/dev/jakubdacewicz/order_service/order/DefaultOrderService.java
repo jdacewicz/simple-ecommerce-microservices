@@ -38,6 +38,16 @@ class DefaultOrderService implements OrderService {
     }
 
     @Override
+    public DetailedOrderDto getDetailedOrder(long id) {
+        logger.debug("Attempt to get details of order {}", id);
+
+        Order order = orderRepository.findById(id);
+
+        logger.info("Successfully got details of order {}", id);
+        return orderMapper.toDetailedOrderDto(order);
+    }
+
+    @Override
     public DetailedOrderDto createOrder(OrderCreationRequest request) {
         logger.debug("Attempt to create order");
 

@@ -1,5 +1,6 @@
 package dev.jakubdacewicz.order_service.order.controller;
 
+import dev.jakubdacewicz.order_service.order.OrderService;
 import dev.jakubdacewicz.order_service.order.dto.DetailedOrderDto;
 import dev.jakubdacewicz.order_service.order.dto.OrderCreationRequest;
 import dev.jakubdacewicz.order_service.order.dto.OrderStatusUpdateResult;
@@ -18,14 +19,20 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/orders")
 public class OrderRestControllerV1 {
 
+    private final OrderService orderService;
+
+    OrderRestControllerV1(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
     @GetMapping("/{id}")
     public SummaryOrderDto getOrder(@Positive @PathVariable long id) {
-        throw new UnsupportedOperationException();
+        return orderService.getOrder(id);
     }
 
     @GetMapping("/{id}/details")
     public DetailedOrderDto getOrderDetails(@Positive @PathVariable long id) {
-        throw new UnsupportedOperationException();
+        return orderService.getDetailedOrder(id);
     }
 
     @GetMapping
@@ -36,7 +43,7 @@ public class OrderRestControllerV1 {
 
     @PostMapping
     public DetailedOrderDto createOrder(@Valid @RequestBody OrderCreationRequest request) {
-        throw new UnsupportedOperationException();
+        return orderService.createOrder(request);
     }
 
     @PutMapping("/{id}/status/{status}")

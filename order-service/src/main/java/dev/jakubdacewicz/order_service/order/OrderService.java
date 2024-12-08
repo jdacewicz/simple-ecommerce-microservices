@@ -9,6 +9,8 @@ public interface OrderService {
 
     SummaryOrderDto getOrder(long id);
 
+    DetailedOrderDto getDetailedOrder(long id);
+
     @Transactional
     DetailedOrderDto createOrder(OrderCreationRequest request);
 }
