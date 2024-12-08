@@ -2,6 +2,8 @@ package dev.jakubdacewicz.cart_service.product;
 
 import dev.jakubdacewicz.cart_service.product.dto.Product;
 import dev.jakubdacewicz.cart_service.shared.exception.ProductFetchFailureException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -14,6 +16,7 @@ import static dev.jakubdacewicz.cart_service.shared.utils.UriUtils.buildUriWithI
 @Component
 class ProductFetcher {
 
+    private static final Logger logger = LoggerFactory.getLogger(ProductFetcher.class);
     private final RestClient restClient;
 
     private final ProductUriBuilder productUriBuilder;
@@ -32,6 +35,7 @@ class ProductFetcher {
                 .uri(uri)
                 .retrieve()
                 .onStatus(httpStatusCode -> !httpStatusCode.is2xxSuccessful(), (request, response) -> {
+                    logger.error("Failed to fetch product: {}, {}", response.getStatusCode(), response.getStatusText());
                     throw new ProductFetchFailureException(response.getStatusText());
                 })
                 .body(Product.class);
@@ -43,6 +47,7 @@ class ProductFetcher {
                 .uri(uriBuilder -> buildUriWithIds(productIds, uriBuilder, uri))
                 .retrieve()
                 .onStatus(httpStatusCode -> !httpStatusCode.is2xxSuccessful(), (request, response) -> {
+                    logger.error("Failed to fetch products: {}, {}", response.getStatusCode(), response.getStatusText());
                     throw new ProductFetchFailureException(response.getStatusText());
                 })
                 .body(new ParameterizedTypeReference<>() {});
