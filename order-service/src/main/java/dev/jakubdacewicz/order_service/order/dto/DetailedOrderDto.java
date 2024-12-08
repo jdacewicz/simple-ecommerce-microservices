@@ -1,6 +1,7 @@
 package dev.jakubdacewicz.order_service.order.dto;
 
 import dev.jakubdacewicz.order_service.order.MonetaryAmount;
+import dev.jakubdacewicz.order_service.shared.types.OrderStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,7 +12,7 @@ public record DetailedOrderDto(
 
         List<OrderItemDto> orderItems,
 
-        String status,
+        OrderStatus status,
 
         MonetaryAmount totalMonetaryAmount,
 
