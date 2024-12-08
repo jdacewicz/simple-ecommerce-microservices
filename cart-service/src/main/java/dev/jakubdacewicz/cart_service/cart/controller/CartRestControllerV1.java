@@ -45,6 +45,6 @@ public class CartRestControllerV1 {
 
     @DeleteMapping("/{id}")
     public CartDeletionResult deleteCart(@PathVariable String id) {
-        throw new UnsupportedOperationException();
+        return cartService.deleteCart(id);
     }
 }

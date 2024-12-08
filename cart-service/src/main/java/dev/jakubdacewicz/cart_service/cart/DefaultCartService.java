@@ -1,9 +1,6 @@
 package dev.jakubdacewicz.cart_service.cart;
 
-import dev.jakubdacewicz.cart_service.cart.dto.CartProductInsertionResult;
-import dev.jakubdacewicz.cart_service.cart.dto.CartProductRemovalResult;
-import dev.jakubdacewicz.cart_service.cart.dto.DetailedCartDto;
-import dev.jakubdacewicz.cart_service.cart.dto.SummaryCartDto;
+import dev.jakubdacewicz.cart_service.cart.dto.*;
 import dev.jakubdacewicz.cart_service.product.dto.Product;
 import dev.jakubdacewicz.cart_service.product.ProductService;
 import dev.jakubdacewicz.cart_service.shared.exception.DocumentNotFoundException;
@@ -118,6 +115,17 @@ class DefaultCartService implements CartService {
         } else {
             return deleteCartItem(cartId, productId, firstCartItem);
         }
+    }
+
+    @Override
+    public CartDeletionResult deleteCart(String id) {
+        logger.debug("Attempt to delete '{}' cart", id);
+
+        cartItemRepository.deleteAllByCartId(id);
+        cartRepository.deleteById(id);
+
+        logger.info("Successfully deleted '{}' cart", id);
+        return new CartDeletionResult(true);
     }
 
     private CartItem getFirstCartItem(String cartId, String productId) {

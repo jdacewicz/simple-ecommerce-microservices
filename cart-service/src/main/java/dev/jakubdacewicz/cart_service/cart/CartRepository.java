@@ -9,4 +9,6 @@ public interface CartRepository {
     boolean addItem(String cartId, String itemId);
 
     boolean removeItem(String cartId, String itemId);
+
+    void deleteById(String id);
 }

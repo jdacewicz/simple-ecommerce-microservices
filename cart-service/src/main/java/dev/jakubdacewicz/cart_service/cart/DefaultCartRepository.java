@@ -35,6 +35,11 @@ class DefaultCartRepository implements CartRepository {
     public boolean removeItem(String cartId, String itemId) {
         return mongoCartRepository.removeItemFromCart(cartId, itemId) > 0;
     }
+
+    @Override
+    public void deleteById(String id) {
+        mongoCartRepository.deleteById(id);
+    }
 }
 
 @Repository

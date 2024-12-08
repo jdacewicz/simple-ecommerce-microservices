@@ -28,10 +28,17 @@ class DefaultCartItemRepository implements CartItemRepository {
     public void deleteById(String id) {
         mongoCartItemRepository.deleteById(id);
     }
+
+    @Override
+    public void deleteAllByCartId(String id) {
+        mongoCartItemRepository.deleteAllByCartId(id);
+    }
 }
 
 @Repository
 interface MongoCartItemRepository extends MongoRepository<CartItem, String> {
 
     List<CartItem> findByCartIdAndProductId(String cartId, String productId);
+
+    void deleteAllByCartId(String cartId);
 }
