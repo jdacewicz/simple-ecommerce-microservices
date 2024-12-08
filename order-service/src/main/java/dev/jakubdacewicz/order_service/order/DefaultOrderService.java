@@ -4,6 +4,7 @@ import dev.jakubdacewicz.order_service.cart.CartService;
 import dev.jakubdacewicz.order_service.order.dto.DetailedOrderDto;
 import dev.jakubdacewicz.order_service.order.dto.OrderCreationRequest;
 import dev.jakubdacewicz.order_service.cart.dto.Cart;
+import dev.jakubdacewicz.order_service.order.dto.OrderStatusUpdateResult;
 import dev.jakubdacewicz.order_service.order.dto.SummaryOrderDto;
 import dev.jakubdacewicz.order_service.shared.types.OrderStatus;
 import org.slf4j.Logger;
@@ -68,8 +69,19 @@ class DefaultOrderService implements OrderService {
         order.setStatus(OrderStatus.CREATED);
 
         Order newOrder = orderRepository.save(order);
+        cartService.deleteCart(request.cartId());
 
         logger.info("Created order {}", newOrder.getId());
         return orderMapper.toDetailedOrderDto(newOrder);
+    }
+
+    @Override
+    public OrderStatusUpdateResult updateOrderStatus(long id, OrderStatus status) {
+        logger.debug("Attempt to update status of order {} to {}", id, status);
+
+        boolean statusUpdated = orderRepository.updateStatus(id, status);
+
+        logger.info("Successfully updated status of order {} to {}", id, status);
+        return new OrderStatusUpdateResult(statusUpdated, status.name());
     }
 }

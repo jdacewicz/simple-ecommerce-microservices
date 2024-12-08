@@ -38,7 +38,7 @@ public class OrderRestControllerV1 {
     @GetMapping
     public Page<SummaryOrderDto> getOrders(@PositiveOrZero @RequestParam(defaultValue = "0") int page,
                                            @Positive @RequestParam(defaultValue = "10") int size) {
-        throw new UnsupportedOperationException();
+        return orderService.getOrders(page, size);
     }
 
     @PostMapping
@@ -49,6 +49,6 @@ public class OrderRestControllerV1 {
     @PutMapping("/{id}/status/{status}")
     public OrderStatusUpdateResult updateOrderStatus(@Positive @PathVariable long id,
                                                      @NotNull @PathVariable OrderStatus status) {
-        throw new UnsupportedOperationException();
+        return orderService.updateOrderStatus(id, status);
     }
 }

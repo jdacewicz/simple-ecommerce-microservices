@@ -7,7 +7,11 @@ class CartUriBuilder {
 
     private static final String API_PREFIX = "/api/v1";
 
-    String buildSingleCartUri(String cartId) {
+    String buildSingleCartFetchUri(String cartId) {
         return API_PREFIX + "/carts/" + cartId + "/details";
+    }
+
+    String buildCartDeletionUri(String id) {
+        return API_PREFIX + "/carts/" + id;
     }
 }

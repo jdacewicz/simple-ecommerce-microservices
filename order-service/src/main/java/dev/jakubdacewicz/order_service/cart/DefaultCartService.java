@@ -11,9 +11,12 @@ class DefaultCartService implements CartService {
     private static final Logger logger = LoggerFactory.getLogger(DefaultCartService.class);
 
     private final CartFetcher cartFetcher;
+    private final CartUpdater cartUpdater;
 
-    DefaultCartService(CartFetcher cartFetcher) {
+    DefaultCartService(CartFetcher cartFetcher,
+                       CartUpdater cartUpdater) {
         this.cartFetcher = cartFetcher;
+        this.cartUpdater = cartUpdater;
     }
 
     @Override
@@ -24,5 +27,14 @@ class DefaultCartService implements CartService {
 
         logger.info("Successfully got '{}' cart", id);
         return cart;
+    }
+
+    @Override
+    public void deleteCart(String id) {
+        logger.debug("Attempt to delete '{}' cart", id);
+
+        cartUpdater.deleteCart(id);
+
+        logger.info("Successfully deleted '{}' cart", id);
     }
 }
