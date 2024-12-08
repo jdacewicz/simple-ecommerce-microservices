@@ -137,6 +137,7 @@ services:
       - "SPRING_DATASOURCE_URL=jdbc:postgresql://orders-postgresql:5432/orders_db"
       - "SPRING_DATASOURCE_USERNAME=orders_user"
       - "SPRING_DATASOURCE_PASSWORD=orders_password"
+      - "CART-SERVICE_URL=http://cart-service:8083"
     networks:
       - microservices
 
