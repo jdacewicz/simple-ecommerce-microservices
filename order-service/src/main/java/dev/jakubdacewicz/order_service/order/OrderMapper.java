@@ -4,6 +4,7 @@ import dev.jakubdacewicz.order_service.order.dto.DetailedOrderDto;
 import dev.jakubdacewicz.order_service.order.dto.OrderItemDto;
 import dev.jakubdacewicz.order_service.cart.dto.Cart;
 import dev.jakubdacewicz.order_service.cart.dto.CartItem;
+import dev.jakubdacewicz.order_service.order.dto.SummaryOrderDto;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,6 +13,13 @@ import java.util.stream.Collectors;
 
 @Component
 class OrderMapper {
+
+    SummaryOrderDto toSummaryOrderDto(Order order) {
+        return new SummaryOrderDto(order.getId(),
+                order.getStatus(),
+                order.getTotalMonetaryAmount(),
+                order.getCreatedAt());
+    }
 
     Order toOrder(Cart cart) {
         Set<OrderItem> orderItems = toOrderItems(cart.cartItems());

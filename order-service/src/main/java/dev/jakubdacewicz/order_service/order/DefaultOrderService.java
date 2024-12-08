@@ -4,6 +4,7 @@ import dev.jakubdacewicz.order_service.cart.CartService;
 import dev.jakubdacewicz.order_service.order.dto.DetailedOrderDto;
 import dev.jakubdacewicz.order_service.order.dto.OrderCreationRequest;
 import dev.jakubdacewicz.order_service.cart.dto.Cart;
+import dev.jakubdacewicz.order_service.order.dto.SummaryOrderDto;
 import dev.jakubdacewicz.order_service.shared.types.OrderStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,16 @@ class DefaultOrderService implements OrderService {
         this.orderRepository = orderRepository;
         this.cartService = cartService;
         this.orderMapper = orderMapper;
+    }
+
+    @Override
+    public SummaryOrderDto getOrder(long id) {
+        logger.debug("Attempt to get summary of order {}", id);
+
+        Order order = orderRepository.findById(id);
+
+        logger.info("Successfully got summary of order {}", id);
+        return orderMapper.toSummaryOrderDto(order);
     }
 
     @Override

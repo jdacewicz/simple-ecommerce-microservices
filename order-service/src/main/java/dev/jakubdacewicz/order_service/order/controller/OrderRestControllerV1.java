@@ -6,7 +6,6 @@ import dev.jakubdacewicz.order_service.order.dto.OrderStatusUpdateResult;
 import dev.jakubdacewicz.order_service.order.dto.SummaryOrderDto;
 import dev.jakubdacewicz.order_service.shared.types.OrderStatus;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -20,12 +19,12 @@ import org.springframework.web.bind.annotation.*;
 public class OrderRestControllerV1 {
 
     @GetMapping("/{id}")
-    public SummaryOrderDto getOrder(@NotBlank @PathVariable String id) {
+    public SummaryOrderDto getOrder(@Positive @PathVariable long id) {
         throw new UnsupportedOperationException();
     }
 
     @GetMapping("/{id}/details")
-    public DetailedOrderDto getOrderDetails(@NotBlank @PathVariable String id) {
+    public DetailedOrderDto getOrderDetails(@Positive @PathVariable long id) {
         throw new UnsupportedOperationException();
     }
 
@@ -41,7 +40,7 @@ public class OrderRestControllerV1 {
     }
 
     @PutMapping("/{id}/status/{status}")
-    public OrderStatusUpdateResult updateOrderStatus(@NotBlank @PathVariable String id,
+    public OrderStatusUpdateResult updateOrderStatus(@Positive @PathVariable long id,
                                                      @NotNull @PathVariable OrderStatus status) {
         throw new UnsupportedOperationException();
     }
