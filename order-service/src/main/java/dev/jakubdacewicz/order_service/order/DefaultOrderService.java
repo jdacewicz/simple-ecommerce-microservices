@@ -8,6 +8,7 @@ import dev.jakubdacewicz.order_service.order.dto.SummaryOrderDto;
 import dev.jakubdacewicz.order_service.shared.types.OrderStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -45,6 +46,16 @@ class DefaultOrderService implements OrderService {
 
         logger.info("Successfully got details of order {}", id);
         return orderMapper.toDetailedOrderDto(order);
+    }
+
+    @Override
+    public Page<SummaryOrderDto> getOrders(int page, int size) {
+        logger.debug("Attempt to get all orders: page {}, size {}", page, size);
+
+        Page<Order> orders = orderRepository.findAll(page, size);
+
+        logger.info("Successfully got all orders: page {}, size {}", page, size);
+        return orders.map(orderMapper::toSummaryOrderDto);
     }
 
     @Override
