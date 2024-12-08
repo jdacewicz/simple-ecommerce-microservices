@@ -2,8 +2,8 @@ package dev.jakubdacewicz.order_service.order;
 
 import dev.jakubdacewicz.order_service.order.dto.DetailedOrderDto;
 import dev.jakubdacewicz.order_service.order.dto.OrderItemDto;
-import dev.jakubdacewicz.order_service.shared.model.Cart;
-import dev.jakubdacewicz.order_service.shared.model.CartItem;
+import dev.jakubdacewicz.order_service.cart.dto.Cart;
+import dev.jakubdacewicz.order_service.cart.dto.CartItem;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

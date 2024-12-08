@@ -3,7 +3,7 @@ package dev.jakubdacewicz.order_service.order;
 import dev.jakubdacewicz.order_service.cart.CartService;
 import dev.jakubdacewicz.order_service.order.dto.DetailedOrderDto;
 import dev.jakubdacewicz.order_service.order.dto.OrderCreationRequest;
-import dev.jakubdacewicz.order_service.shared.model.Cart;
+import dev.jakubdacewicz.order_service.cart.dto.Cart;
 import dev.jakubdacewicz.order_service.shared.types.OrderStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

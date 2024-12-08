@@ -1,4 +1,4 @@
-package dev.jakubdacewicz.order_service.shared.model;
+package dev.jakubdacewicz.order_service.cart.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

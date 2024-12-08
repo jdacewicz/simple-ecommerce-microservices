@@ -1,6 +1,6 @@
 package dev.jakubdacewicz.order_service.cart;
 
-import dev.jakubdacewicz.order_service.shared.model.Cart;
+import dev.jakubdacewicz.order_service.cart.dto.Cart;
 
 public interface CartService {
 
