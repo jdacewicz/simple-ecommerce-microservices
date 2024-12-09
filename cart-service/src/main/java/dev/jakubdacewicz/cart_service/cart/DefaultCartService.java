@@ -1,6 +1,7 @@
 package dev.jakubdacewicz.cart_service.cart;
 
 import dev.jakubdacewicz.cart_service.cart.dto.*;
+import dev.jakubdacewicz.cart_service.product.ProductMapper;
 import dev.jakubdacewicz.cart_service.product.dto.Product;
 import dev.jakubdacewicz.cart_service.product.ProductService;
 import dev.jakubdacewicz.cart_service.shared.exception.DocumentNotFoundException;
@@ -21,6 +22,7 @@ class DefaultCartService implements CartService {
     private final CartItemRepository cartItemRepository;
 
     private final CartMapper cartMapper;
+    private final ProductMapper productMapper;
 
     private final CartCalculator cartCalculator;
 
@@ -29,11 +31,13 @@ class DefaultCartService implements CartService {
     DefaultCartService(CartRepository cartRepository,
                        CartItemRepository cartItemRepository,
                        CartMapper cartMapper,
+                       ProductMapper productMapper,
                        CartCalculator cartCalculator,
                        ProductService productService) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.cartMapper = cartMapper;
+        this.productMapper = productMapper;
         this.cartCalculator = cartCalculator;
         this.productService = productService;
     }
@@ -47,7 +51,7 @@ class DefaultCartService implements CartService {
         List<String> productIds = cartMapper.toProductIds(cart.getCartItems());
         List<Product> products = productService.fetchProducts(productIds);
 
-        Map<String, BigDecimal> productPrices = cartMapper.toPriceMap(products);
+        Map<String, Product> productPrices = productMapper.toProductCatalog(products);
         BigDecimal totalPrice = cartCalculator.calculateTotalPrice(cart.getCartItems(), productPrices);
 
         logger.info("Successfully got '{}' summary cart", id);
@@ -63,11 +67,11 @@ class DefaultCartService implements CartService {
         List<String> productIds = cartMapper.toProductIds(cart.getCartItems());
         List<Product> products = productService.fetchProducts(productIds);
 
-        Map<String, BigDecimal> productPrices = cartMapper.toPriceMap(products);
-        BigDecimal totalPrice = cartCalculator.calculateTotalPrice(cart.getCartItems(), productPrices);
+        Map<String, Product> productCatalog = productMapper.toProductCatalog(products);
+        BigDecimal totalPrice = cartCalculator.calculateTotalPrice(cart.getCartItems(), productCatalog);
 
         logger.info("Successfully got '{}' detailed cart", id);
-        return cartMapper.toDetailedCartDto(cart, productPrices, totalPrice);
+        return cartMapper.toDetailedCartDto(cart, productCatalog, totalPrice);
     }
 
     @Override

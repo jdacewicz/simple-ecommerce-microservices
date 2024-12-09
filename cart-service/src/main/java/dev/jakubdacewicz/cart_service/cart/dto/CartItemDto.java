@@ -8,7 +8,10 @@ public record CartItemDto(
         String id,
         String productId,
 
+        String name,
+
         int quantity,
+
         BigDecimal price,
 
         LocalDateTime updatedAt) {
