@@ -40,13 +40,13 @@ public class Order {
     @Column(nullable = false)
     private UUID businessKey;
 
-    public Order(Long id,
-                 Set<OrderItem> orderItems,
-                 OrderStatus status,
-                 MonetaryAmount totalMonetaryAmount,
-                 LocalDateTime createdAt,
-                 LocalDateTime updatedAt,
-                 UUID businessKey) {
+    Order(Long id,
+          Set<OrderItem> orderItems,
+          OrderStatus status,
+          MonetaryAmount totalMonetaryAmount,
+          LocalDateTime createdAt,
+          LocalDateTime updatedAt,
+          UUID businessKey) {
         this.id = id;
         this.orderItems = orderItems;
         this.status = status;
@@ -54,6 +54,9 @@ public class Order {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.businessKey = businessKey;
+    }
+
+    Order() {
     }
 
     @Override

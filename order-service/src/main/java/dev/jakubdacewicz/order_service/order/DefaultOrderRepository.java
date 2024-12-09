@@ -4,10 +4,14 @@ import dev.jakubdacewicz.order_service.shared.exception.RecordNotFoundException;
 import dev.jakubdacewicz.order_service.shared.types.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 class DefaultOrderRepository implements OrderRepository {
@@ -20,7 +24,7 @@ class DefaultOrderRepository implements OrderRepository {
 
     @Override
     public Order findById(long id) {
-        return jpaOrderRepository.findById(id)
+        return jpaOrderRepository.findWithOrderItemsById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Could not find order with id: " + id));
     }
 
@@ -43,9 +47,12 @@ class DefaultOrderRepository implements OrderRepository {
 @Repository
 interface JpaOrderRepository extends JpaRepository<Order, Long> {
 
+    @EntityGraph(attributePaths = "orderItems")
+    Optional<Order> findWithOrderItemsById(long id);
+
     @Modifying
     @Query("UPDATE Order o " +
             "SET o.status = :status " +
             "WHERE o.id = :id")
-    int updateStatus(long id, OrderStatus status);
+    int updateStatus(@Param("id") long id, OrderStatus status);
 }
