@@ -22,11 +22,14 @@ class OrderMapper {
     }
 
     Order toOrder(Cart cart) {
-        Set<OrderItem> orderItems = toOrderItems(cart.cartItems());
-        return new OrderBuilder()
-                .orderItems(orderItems)
+        Order order = new OrderBuilder()
                 .totalMonetaryAmount(cart.totalPrice(), cart.totalQuantity())
                 .build();
+
+        Set<OrderItem> orderItems = toOrderItems(order, cart.cartItems());
+        order.setOrderItems(orderItems);
+
+        return order;
     }
 
     DetailedOrderDto toDetailedOrderDto(Order newOrder) {
@@ -38,15 +41,17 @@ class OrderMapper {
                 newOrder.getCreatedAt());
     }
 
-    private Set<OrderItem> toOrderItems(List<CartItem> cartItems) {
+    private Set<OrderItem> toOrderItems(Order order, List<CartItem> cartItems) {
         return cartItems.stream()
-                .map(this::toOrderItem)
+                .map(cartItem -> toOrderItem(order, cartItem))
                 .collect(Collectors.toSet());
     }
 
-    private OrderItem toOrderItem(CartItem cartItem) {
+    private OrderItem toOrderItem(Order order, CartItem cartItem) {
         return new OrderItemBuilder()
+                .order(order)
                 .productId(cartItem.productId())
+                .name(cartItem.name())
                 .unitMonetaryAmount(cartItem.price())
                 .totalMonetaryAmount(cartItem.price(), cartItem.quantity())
                 .build();

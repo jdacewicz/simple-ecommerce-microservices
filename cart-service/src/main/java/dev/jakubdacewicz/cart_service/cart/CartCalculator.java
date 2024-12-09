@@ -1,5 +1,6 @@
 package dev.jakubdacewicz.cart_service.cart;
 
+import dev.jakubdacewicz.cart_service.product.dto.Product;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -12,15 +13,19 @@ class CartCalculator {
     public static final BigDecimal DEFAULT_PRODUCT_PRICE = BigDecimal.ZERO;
 
     public BigDecimal calculateTotalPrice(List<CartItem> cartItems,
-                                          Map<String, BigDecimal> productPrices) {
+                                          Map<String, Product> productCatalog) {
         return cartItems.stream()
-                .map(cartItem -> calculateSubtotalPrice(productPrices, cartItem))
+                .map(cartItem -> calculateSubtotalPrice(productCatalog, cartItem))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private BigDecimal calculateSubtotalPrice(Map<String, BigDecimal> productPrices, CartItem cartItem) {
-        BigDecimal price = productPrices.getOrDefault(cartItem.getProductId(), DEFAULT_PRODUCT_PRICE);
-
-        return  price.multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+    private BigDecimal calculateSubtotalPrice(Map<String, Product> productCatalog, CartItem cartItem) {
+        Product product = productCatalog.get(cartItem.getProductId());
+        if (product == null) {
+            return DEFAULT_PRODUCT_PRICE;
+        }
+        return product.stock()
+                .price()
+                .multiply(BigDecimal.valueOf(cartItem.getQuantity()));
     }
 }

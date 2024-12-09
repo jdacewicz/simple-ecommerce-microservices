@@ -14,7 +14,7 @@ public record DetailedOrderDto(
 
         OrderStatus status,
 
-        MonetaryAmount totalMonetaryAmount,
+        MonetaryAmount orderMonetaryAmount,
 
         LocalDateTime createdAt) {
 }

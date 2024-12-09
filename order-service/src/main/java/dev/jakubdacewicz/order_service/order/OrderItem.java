@@ -52,15 +52,15 @@ public class OrderItem {
     @Column(nullable = false)
     private UUID businessKey;
 
-    public OrderItem(Long id,
-                     Order order,
-                     String productId,
-                     String name,
-                     MonetaryAmount unitMonetaryAmount,
-                     MonetaryAmount totalMonetaryAmount,
-                     LocalDateTime createdAt,
-                     LocalDateTime updatedAt,
-                     UUID businessKey) {
+    OrderItem(Long id,
+              Order order,
+              String productId,
+              String name,
+              MonetaryAmount unitMonetaryAmount,
+              MonetaryAmount totalMonetaryAmount,
+              LocalDateTime createdAt,
+              LocalDateTime updatedAt,
+              UUID businessKey) {
         this.id = id;
         this.order = order;
         this.productId = productId;
@@ -70,6 +70,9 @@ public class OrderItem {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.businessKey = businessKey;
+    }
+
+    OrderItem() {
     }
 
     @Override

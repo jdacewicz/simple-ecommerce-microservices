@@ -8,6 +8,8 @@ public record CartItem(
         String id,
         String productId,
 
+        String name,
+
         int quantity,
 
         BigDecimal price,

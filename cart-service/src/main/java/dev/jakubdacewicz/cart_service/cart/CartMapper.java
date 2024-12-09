@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 class CartMapper {
@@ -18,8 +17,10 @@ class CartMapper {
         return new SummaryCartDto(cart.getId(), cart.getTotalQuantity(), totalPrice);
     }
 
-    DetailedCartDto toDetailedCartDto(Cart cart, Map<String, BigDecimal> productPrices, BigDecimal totalPrice) {
-        List<CartItemDto> cartItems = toCartItemDto(cart.getCartItems(), productPrices);
+    DetailedCartDto toDetailedCartDto(Cart cart,
+                                      Map<String, Product> productCatalog,
+                                      BigDecimal totalPrice) {
+        List<CartItemDto> cartItems = toCartItemDto(cart.getCartItems(), productCatalog);
 
         return new DetailedCartDto(cart.getId(),
                 cartItems,
@@ -28,18 +29,20 @@ class CartMapper {
                 cart.getUpdatedAt());
     }
 
-    List<CartItemDto> toCartItemDto(List<CartItem> cartItems, Map<String, BigDecimal> productPrices) {
+    List<CartItemDto> toCartItemDto(List<CartItem> cartItems,
+                                    Map<String, Product> productCatalog) {
         return cartItems.stream()
-                .map(cartItem -> toCartItemDto(cartItem, productPrices.get(cartItem.getProductId())))
+                .map(cartItem -> toCartItemDto(cartItem, productCatalog.get(cartItem.getProductId())))
                 .toList();
     }
 
-    CartItemDto toCartItemDto(CartItem cartItem, BigDecimal price) {
+    CartItemDto toCartItemDto(CartItem cartItem, Product product) {
         return new CartItemDto(
                 cartItem.getId(),
                 cartItem.getProductId(),
+                product.name(),
                 cartItem.getQuantity(),
-                price,
+                product.stock().price(),
                 cartItem.getUpdatedAt()
         );
     }
@@ -48,10 +51,5 @@ class CartMapper {
         return cartItems.stream()
                 .map(CartItem::getProductId)
                 .toList();
-    }
-
-    Map<String, BigDecimal> toPriceMap(List<Product> products) {
-        return products.stream()
-                .collect(Collectors.toMap(Product::id, product -> product.stock().price()));
     }
 }
