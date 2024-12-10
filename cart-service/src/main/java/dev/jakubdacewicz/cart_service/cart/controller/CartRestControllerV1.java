@@ -2,6 +2,7 @@ package dev.jakubdacewicz.cart_service.cart.controller;
 
 import dev.jakubdacewicz.cart_service.cart.CartService;
 import dev.jakubdacewicz.cart_service.cart.dto.*;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,37 +15,32 @@ public class CartRestControllerV1 {
         this.cartService = cartService;
     }
 
-    @GetMapping("/{id}")
-    public SummaryCartDto getCart(@PathVariable String id) {
-        return cartService.getCart(id);
+    @GetMapping("/my")
+    public SummaryCartDto getMyCart(HttpSession session) {
+        return cartService.getMyCart(session);
     }
 
-    @GetMapping("/{id}/details")
-    public DetailedCartDto getDetailedCart(@PathVariable String id) {
-        return cartService.getDetailedCart(id);
+    @GetMapping("/my/details")
+    public DetailedCartDto getMyDetailedCart(HttpSession session) {
+        return cartService.getMyDetailedCart(session);
     }
 
-    @PostMapping
-    public SummaryCartDto createCart() {
-        return cartService.createCart();
+    @PutMapping("/my/products/{productId}/add")
+    public CartProductInsertionResult addProductsToMyCart(HttpSession session,
+                                                          @PathVariable String productId,
+                                                          @RequestParam int quantity) {
+        return cartService.addProductsToMyCart(session, productId, quantity);
     }
 
-    @PutMapping("/{cartId}/products/{productId}/add")
-    public CartProductInsertionResult addProductsToCart(@PathVariable String cartId,
-                                                        @PathVariable String productId,
-                                                        @RequestParam int quantity) {
-        return cartService.addProductsToCart(cartId, productId, quantity);
+    @PutMapping("/my/products/{productId}/remove")
+    public CartProductRemovalResult removeProductsFromMyCart(HttpSession session,
+                                                             @PathVariable String productId,
+                                                             @RequestParam int quantity) {
+        return cartService.removeProductsFromMyCart(session, productId, quantity);
     }
 
-    @PutMapping("/{cartId}/products/{productId}/remove")
-    public CartProductRemovalResult removeProductsFromCart(@PathVariable String cartId,
-                                                           @PathVariable String productId,
-                                                           @RequestParam int quantity) {
-        return cartService.removeProductsFromCart(cartId, productId, quantity);
-    }
-
-    @DeleteMapping("/{id}")
-    public CartDeletionResult deleteCart(@PathVariable String id) {
-        return cartService.deleteCart(id);
+    @DeleteMapping("/my")
+    public CartDeletionResult deleteMyCart(HttpSession session) {
+        return cartService.deleteMyCart(session);
     }
 }

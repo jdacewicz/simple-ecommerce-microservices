@@ -5,6 +5,7 @@ import dev.jakubdacewicz.cart_service.product.ProductMapper;
 import dev.jakubdacewicz.cart_service.product.dto.Product;
 import dev.jakubdacewicz.cart_service.product.ProductService;
 import dev.jakubdacewicz.cart_service.shared.exception.DocumentNotFoundException;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,7 @@ class DefaultCartService implements CartService {
     }
 
     @Override
-    public SummaryCartDto getCart(String id) {
+    public SummaryCartDto getMyCart(HttpSession session) {
         logger.debug("Attempt to get '{}' summary cart", id);
 
         Cart cart = cartRepository.findById(id);
@@ -59,7 +60,7 @@ class DefaultCartService implements CartService {
     }
 
     @Override
-    public DetailedCartDto getDetailedCart(String id) {
+    public DetailedCartDto getMyDetailedCart(HttpSession session) {
         logger.debug("Attempt to get '{}' detailed cart", id);
 
         Cart cart = cartRepository.findById(id);
@@ -75,19 +76,7 @@ class DefaultCartService implements CartService {
     }
 
     @Override
-    public SummaryCartDto createCart() {
-        logger.debug("Attempt to create cart");
-
-        Cart cart = new CartBuilder()
-                .build();
-        Cart newCart = cartRepository.save(cart);
-
-        logger.info("Successfully created cart '{}'", newCart.getId());
-        return cartMapper.toSummaryCartDto(newCart, BigDecimal.ZERO);
-    }
-
-    @Override
-    public CartProductInsertionResult addProductsToCart(String cartId, String productId, int quantity) {
+    public CartProductInsertionResult addProductsToMyCart(HttpSession session, String productId, int quantity) {
         logger.debug("Attempt to add '{}' product of quantity {} to '{}' cart", productId, quantity, cartId);
 
         productService.validateProductExists(productId);
@@ -108,7 +97,7 @@ class DefaultCartService implements CartService {
     }
 
     @Override
-    public CartProductRemovalResult removeProductsFromCart(String cartId, String productId, int quantity) {
+    public CartProductRemovalResult removeProductsFromMyCart(HttpSession session, String productId, int quantity) {
         logger.debug("Attempt to remove '{}' product of quantity {} from '{}' cart", productId, quantity, cartId);
 
         CartItem firstCartItem = getFirstCartItem(cartId, productId);
@@ -122,7 +111,7 @@ class DefaultCartService implements CartService {
     }
 
     @Override
-    public CartDeletionResult deleteCart(String id) {
+    public CartDeletionResult deleteMyCart(HttpSession session) {
         logger.debug("Attempt to delete '{}' cart", id);
 
         cartItemRepository.deleteAllByCartId(id);

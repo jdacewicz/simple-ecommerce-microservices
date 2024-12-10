@@ -1,23 +1,21 @@
 package dev.jakubdacewicz.cart_service.cart;
 
 import dev.jakubdacewicz.cart_service.cart.dto.*;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface CartService {
 
-    SummaryCartDto getCart(String id);
+    SummaryCartDto getMyCart(HttpSession session);
 
-    DetailedCartDto getDetailedCart(String id);
-
-    @Transactional
-    SummaryCartDto createCart();
+    DetailedCartDto getMyDetailedCart(HttpSession session);
 
     @Transactional
-    CartProductInsertionResult addProductsToCart(String cartId, String productId, int quantity);
+    CartProductInsertionResult addProductsToMyCart(HttpSession session, String productId, int quantity);
 
     @Transactional
-    CartProductRemovalResult removeProductsFromCart(String cartId, String productId, int quantity);
+    CartProductRemovalResult removeProductsFromMyCart(HttpSession session, String productId, int quantity);
 
     @Transactional
-    CartDeletionResult deleteCart(String id);
+    CartDeletionResult deleteMyCart(HttpSession session);
 }
