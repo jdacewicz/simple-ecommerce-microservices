@@ -26,16 +26,16 @@ public class CartRestControllerV1 {
     }
 
     @PutMapping("/my/products/{productId}/add")
-    public CartProductInsertionResult addProductsToMyCart(HttpSession session,
-                                                          @PathVariable String productId,
-                                                          @RequestParam int quantity) {
+    public CartUpdateResult addProductsToMyCart(HttpSession session,
+                                                @PathVariable String productId,
+                                                @RequestParam int quantity) {
         return cartService.addProductsToMyCart(session, productId, quantity);
     }
 
     @PutMapping("/my/products/{productId}/remove")
-    public CartProductRemovalResult removeProductsFromMyCart(HttpSession session,
-                                                             @PathVariable String productId,
-                                                             @RequestParam int quantity) {
+    public CartUpdateResult removeProductsFromMyCart(HttpSession session,
+                                                     @PathVariable String productId,
+                                                     @RequestParam int quantity) {
         return cartService.removeProductsFromMyCart(session, productId, quantity);
     }
 

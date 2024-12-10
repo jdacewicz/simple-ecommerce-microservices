@@ -4,23 +4,21 @@ import dev.jakubdacewicz.cart_service.cart.dto.*;
 import dev.jakubdacewicz.cart_service.product.ProductMapper;
 import dev.jakubdacewicz.cart_service.product.dto.Product;
 import dev.jakubdacewicz.cart_service.product.ProductService;
-import dev.jakubdacewicz.cart_service.shared.exception.DocumentNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 class DefaultCartService implements CartService {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultCartService.class);
 
-    private final CartRepository cartRepository;
-    private final CartItemRepository cartItemRepository;
+    private final String CART_ATTRIBUTE_IN_SESSION = "CART";
 
     private final CartMapper cartMapper;
     private final ProductMapper productMapper;
@@ -29,14 +27,10 @@ class DefaultCartService implements CartService {
 
     private final ProductService productService;
 
-    DefaultCartService(CartRepository cartRepository,
-                       CartItemRepository cartItemRepository,
-                       CartMapper cartMapper,
+    DefaultCartService(CartMapper cartMapper,
                        ProductMapper productMapper,
                        CartCalculator cartCalculator,
                        ProductService productService) {
-        this.cartRepository = cartRepository;
-        this.cartItemRepository = cartItemRepository;
         this.cartMapper = cartMapper;
         this.productMapper = productMapper;
         this.cartCalculator = cartCalculator;
@@ -45,105 +39,93 @@ class DefaultCartService implements CartService {
 
     @Override
     public SummaryCartDto getMyCart(HttpSession session) {
-        logger.debug("Attempt to get '{}' summary cart", id);
+        logger.debug("Attempt to get summary cart of session '{}'", session.getId());
 
-        Cart cart = cartRepository.findById(id);
+        Cart cart = getOrCreateMyCart(session);
 
-        List<String> productIds = cartMapper.toProductIds(cart.getCartItems());
-        List<Product> products = productService.fetchProducts(productIds);
+        Set<String> productIds = cartMapper.toProductIds(cart.getCartItems());
+        Set<Product> products = productService.fetchProducts(productIds);
 
         Map<String, Product> productPrices = productMapper.toProductCatalog(products);
         BigDecimal totalPrice = cartCalculator.calculateTotalPrice(cart.getCartItems(), productPrices);
 
-        logger.info("Successfully got '{}' summary cart", id);
+        logger.info("Successfully got summary cart of session '{}'", session.getId());
         return cartMapper.toSummaryCartDto(cart, totalPrice);
     }
 
     @Override
     public DetailedCartDto getMyDetailedCart(HttpSession session) {
-        logger.debug("Attempt to get '{}' detailed cart", id);
+        logger.debug("Attempt to get detailed cart of session '{}'", session.getId());
 
-        Cart cart = cartRepository.findById(id);
+        Cart cart = getOrCreateMyCart(session);
 
-        List<String> productIds = cartMapper.toProductIds(cart.getCartItems());
-        List<Product> products = productService.fetchProducts(productIds);
+        Set<String> productIds = cartMapper.toProductIds(cart.getCartItems());
+        Set<Product> products = productService.fetchProducts(productIds);
 
         Map<String, Product> productCatalog = productMapper.toProductCatalog(products);
         BigDecimal totalPrice = cartCalculator.calculateTotalPrice(cart.getCartItems(), productCatalog);
 
-        logger.info("Successfully got '{}' detailed cart", id);
+        logger.info("Successfully got detailed cart of session '{}'", session.getId());
         return cartMapper.toDetailedCartDto(cart, productCatalog, totalPrice);
     }
 
     @Override
-    public CartProductInsertionResult addProductsToMyCart(HttpSession session, String productId, int quantity) {
-        logger.debug("Attempt to add '{}' product of quantity {} to '{}' cart", productId, quantity, cartId);
+    public CartUpdateResult addProductsToMyCart(HttpSession session, String productId, int quantity) {
+        logger.debug("Attempt to add '{}' product of quantity {} to cart of session '{}'",
+                productId, quantity, session.getId());
 
         productService.validateProductExists(productId);
 
-        Cart cart = cartRepository.findById(cartId);
+        Cart cart = getOrCreateMyCart(session);
 
-        CartItem cartItem = new CartItemBuilder()
-                .cartId(cart.getId())
-                .productId(productId)
-                .quantity(quantity)
-                .build();
-        CartItem newCartItem = cartItemRepository.save(cartItem);
+        CartItem cartItem = new CartItem(productId, quantity);
+        cart.addCartItem(cartItem);
 
-        boolean itemAdded = cartRepository.addItem(cartId, newCartItem.getId());
+        session.setAttribute(CART_ATTRIBUTE_IN_SESSION, cart);
 
-        logger.info("Successfully added '{}' product of quantity {} to '{}' cart", productId, quantity, cartId);
-        return new CartProductInsertionResult(itemAdded);
+        logger.debug("Successfully added products '{}' of quantity {} to cart of session '{}'",
+                productId, quantity, session.getId());
+        return new CartUpdateResult(true);
     }
 
     @Override
-    public CartProductRemovalResult removeProductsFromMyCart(HttpSession session, String productId, int quantity) {
-        logger.debug("Attempt to remove '{}' product of quantity {} from '{}' cart", productId, quantity, cartId);
+    public CartUpdateResult removeProductsFromMyCart(HttpSession session, String productId, int quantity) {
+        logger.debug("Attempt to remove '{}' product of quantity {} from cart of session '{}'",
+                productId, quantity, session.getId());
 
-        CartItem firstCartItem = getFirstCartItem(cartId, productId);
-        firstCartItem.subtractQuantity(quantity);
+        Cart cart = getOrCreateMyCart(session);
 
-        if (firstCartItem.getQuantity() > 0) {
-            return updateQuantityOfCartItem(cartId, productId, quantity, firstCartItem);
-        } else {
-            return deleteCartItem(cartId, productId, firstCartItem);
-        }
+        CartItem cartItem = new CartItem(productId, quantity);
+        cart.removeCartItem(cartItem);
+
+        session.setAttribute(CART_ATTRIBUTE_IN_SESSION, cart);
+
+        return new CartUpdateResult(true);
     }
 
     @Override
     public CartDeletionResult deleteMyCart(HttpSession session) {
-        logger.debug("Attempt to delete '{}' cart", id);
+        logger.debug("Attempt to delete cart of session '{}'", session.getId());
 
-        cartItemRepository.deleteAllByCartId(id);
-        cartRepository.deleteById(id);
+        session.removeAttribute(CART_ATTRIBUTE_IN_SESSION);
 
-        logger.info("Successfully deleted '{}' cart", id);
+        logger.info("Successfully deleted cart of session '{}'", session.getId());
         return new CartDeletionResult(true);
     }
 
-    private CartItem getFirstCartItem(String cartId, String productId) {
-        List<CartItem> cartItems = cartItemRepository.findByCartIdAndProductId(cartId, productId);
-        if (cartItems.isEmpty()) {
-            logger.info("Could not find product with id: {} in cart with id: {}", productId, cartId);
-            throw new DocumentNotFoundException("Could not find product with id: " + productId
-                    + " in cart with id: " + cartId);
-        }
-        return cartItems.getFirst();
+    private Cart getOrCreateMyCart(HttpSession session) {
+        Cart cart = (Cart) session.getAttribute(CART_ATTRIBUTE_IN_SESSION);
+
+        return (cart != null) ? cart : createNewCart(session);
     }
 
-    private CartProductRemovalResult updateQuantityOfCartItem(String cartId, String productId,
-                                                              int quantity, CartItem firstCartItem) {
-        cartItemRepository.save(firstCartItem);
+    private Cart createNewCart(HttpSession session) {
+        logger.debug("Attempt to create new cart of session '{}'", session.getId());
 
-        logger.info("Successfully removed '{}' product of quantity {} from '{}' cart", productId, quantity, cartId);
-        return new CartProductRemovalResult(true, false);
-    }
+        Cart cart = new Cart();
+        session.setAttribute(CART_ATTRIBUTE_IN_SESSION, cart);
 
-    private CartProductRemovalResult deleteCartItem(String cartId, String productId, CartItem firstCartItem) {
-        boolean productRemoved = cartRepository.removeItem(cartId, firstCartItem.getId());
-        cartItemRepository.deleteById(firstCartItem.getId());
-
-        logger.info("Successfully removed all '{}' product from '{}' cart", productId, cartId);
-        return new CartProductRemovalResult(false, productRemoved);
+        logger.info("Successfully created new cart of session '{}'", session.getId());
+        return cart;
     }
 }

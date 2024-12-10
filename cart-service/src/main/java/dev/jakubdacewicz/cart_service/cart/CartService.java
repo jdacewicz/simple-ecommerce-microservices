@@ -11,10 +11,10 @@ public interface CartService {
     DetailedCartDto getMyDetailedCart(HttpSession session);
 
     @Transactional
-    CartProductInsertionResult addProductsToMyCart(HttpSession session, String productId, int quantity);
+    CartUpdateResult addProductsToMyCart(HttpSession session, String productId, int quantity);
 
     @Transactional
-    CartProductRemovalResult removeProductsFromMyCart(HttpSession session, String productId, int quantity);
+    CartUpdateResult removeProductsFromMyCart(HttpSession session, String productId, int quantity);
 
     @Transactional
     CartDeletionResult deleteMyCart(HttpSession session);
