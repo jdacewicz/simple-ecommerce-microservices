@@ -1,17 +1,13 @@
 package dev.jakubdacewicz.cart_service.cart.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 public record DetailedCartDto(
 
-        String id,
-
-        List<CartItemDto> cartItems,
+        Set<CartItemDto> cartItems,
 
         int totalQuantity,
-        BigDecimal totalPrice,
 
-        LocalDateTime updatedAt) {
+        BigDecimal totalPrice) {
 }
