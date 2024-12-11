@@ -1,18 +1,16 @@
 package dev.jakubdacewicz.cart_service.cart;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Cart {
+public class Cart implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private Set<CartItem> cartItems = new HashSet<>();
-
-    Cart() {
-    }
-
-    Cart(Set<CartItem> cartItems) {
-        this.cartItems = cartItems;
-    }
 
     public void addCartItem(CartItem cartItem) {
         cartItems.stream()

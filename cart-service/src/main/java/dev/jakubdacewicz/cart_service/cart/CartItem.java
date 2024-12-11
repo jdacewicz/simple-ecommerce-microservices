@@ -1,24 +1,22 @@
 package dev.jakubdacewicz.cart_service.cart;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class CartItem {
+public class CartItem implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private String productId;
 
     private int quantity;
 
-    CartItem() {
-    }
-
     CartItem(String productId,
              int quantity) {
         this.productId = productId;
         this.quantity = quantity;
-    }
-
-    public void subtractQuantity(int quantity) {
-        this.quantity -= quantity;
     }
 
     @Override
