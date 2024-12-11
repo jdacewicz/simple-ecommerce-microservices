@@ -64,15 +64,15 @@ services:
     networks:
       - microservices
 
-  carts-mongodb:
-    image: "mongo:8.0.3"
-    container_name: carts-mongodb
+  carts-redis:
+    image: "redis:7.4.1-alpine"
+    container_name: carts-redis
     ports:
-      - "27018:27017"
+      - "6379:6379"
     volumes:
-      - carts-mongodb:/data/db
+      - carts-redis:/data/db
     healthcheck:
-      test: "mongosh --eval 'db.adminCommand(\"ping\")' || exit 1"
+      test: "redis-cli ping"
       interval: 2s
       timeout: 3s
       retries: 5
@@ -150,14 +150,13 @@ services:
     depends_on:
       config-server:
         condition: service_healthy
-      carts-mongodb:
+      carts-redis:
         condition: service_healthy
       service-registry:
         condition: service_healthy
     environment:
-      - "SPRING_DATA_MONGODB_DATABASE=carts"
-      - "SPRING_DATA_MONGODB_HOST=carts-mongodb"
-      - "SPRING_DATA_MONGODB_PORT=27017"
+      - "SPRING_DATA_REDIS_HOST=carts-redis"
+      - "SPRING_DATA_REDIS_PORT=6379"
       - "PRODUCT-SERVICE_URL=http://product-service:8081"
     networks:
       - microservices
@@ -165,7 +164,7 @@ services:
 volumes:
   products-mongodb:
     driver: local
-  carts-mongodb:
+  carts-redis:
     driver: local
   orders-postgresql:
     driver: local
