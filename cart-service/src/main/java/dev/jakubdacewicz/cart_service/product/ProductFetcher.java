@@ -9,7 +9,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
-import java.util.List;
+import java.util.Set;
 
 import static dev.jakubdacewicz.cart_service.shared.utils.UriUtils.buildUriWithIds;
 
@@ -41,7 +41,7 @@ class ProductFetcher {
                 .body(Product.class);
     }
 
-    List<Product> fetchProducts(List<String> productIds) {
+    Set<Product> fetchProducts(Set<String> productIds) {
         String uri = productUriBuilder.buildMultipleProductUri();
         return restClient.get()
                 .uri(uriBuilder -> buildUriWithIds(productIds, uriBuilder, uri))

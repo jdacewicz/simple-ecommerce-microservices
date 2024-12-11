@@ -7,49 +7,46 @@ import dev.jakubdacewicz.cart_service.product.dto.Product;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 class CartMapper {
 
     SummaryCartDto toSummaryCartDto(Cart cart, BigDecimal totalPrice) {
-        return new SummaryCartDto(cart.getId(), cart.getTotalQuantity(), totalPrice);
+        return new SummaryCartDto(cart.getTotalQuantity(), totalPrice);
     }
 
     DetailedCartDto toDetailedCartDto(Cart cart,
                                       Map<String, Product> productCatalog,
                                       BigDecimal totalPrice) {
-        List<CartItemDto> cartItems = toCartItemDto(cart.getCartItems(), productCatalog);
+        Set<CartItemDto> cartItems = toCartItemDto(cart.getCartItems(), productCatalog);
 
-        return new DetailedCartDto(cart.getId(),
+        return new DetailedCartDto(
                 cartItems,
                 cart.getTotalQuantity(),
-                totalPrice,
-                cart.getUpdatedAt());
+                totalPrice);
     }
 
-    List<CartItemDto> toCartItemDto(List<CartItem> cartItems,
+    Set<CartItemDto> toCartItemDto(Set<CartItem> cartItems,
                                     Map<String, Product> productCatalog) {
         return cartItems.stream()
                 .map(cartItem -> toCartItemDto(cartItem, productCatalog.get(cartItem.getProductId())))
-                .toList();
+                .collect(Collectors.toSet());
     }
 
     CartItemDto toCartItemDto(CartItem cartItem, Product product) {
         return new CartItemDto(
-                cartItem.getId(),
                 cartItem.getProductId(),
                 product.name(),
                 cartItem.getQuantity(),
-                product.stock().price(),
-                cartItem.getUpdatedAt()
-        );
+                product.stock().price());
     }
 
-    List<String> toProductIds(List<CartItem> cartItems) {
+    Set<String> toProductIds(Set<CartItem> cartItems) {
         return cartItems.stream()
                 .map(CartItem::getProductId)
-                .toList();
+                .collect(Collectors.toSet());
     }
 }

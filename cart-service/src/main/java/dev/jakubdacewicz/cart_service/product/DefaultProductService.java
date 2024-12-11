@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Set;
 
 @Service
 class DefaultProductService implements ProductService {
@@ -19,10 +19,10 @@ class DefaultProductService implements ProductService {
     }
 
     @Override
-    public List<Product> fetchProducts(List<String> productIds) {
+    public Set<Product> fetchProducts(Set<String> productIds) {
         logger.debug("Attempt to get '{}' products", productIds.size());
 
-        List<Product> products = productFetcher.fetchProducts(productIds);
+        Set<Product> products = productFetcher.fetchProducts(productIds);
 
         logger.info("Successfully got '{}' products", products.size());
         return products;
