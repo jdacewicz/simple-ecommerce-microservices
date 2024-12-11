@@ -25,6 +25,11 @@ public class CartRestControllerV1 {
         return cartService.getMyDetailedCart(session);
     }
 
+    @GetMapping("/{id}")
+    public DetailedCartDto getDetailedCart(@PathVariable String id) {
+        return cartService.getDetailedCart(id);
+    }
+
     @PutMapping("/my/products/{productId}/add")
     public CartUpdateResult addProductsToMyCart(HttpSession session,
                                                 @PathVariable String productId,
@@ -42,5 +47,10 @@ public class CartRestControllerV1 {
     @DeleteMapping("/my")
     public CartDeletionResult deleteMyCart(HttpSession session) {
         return cartService.deleteMyCart(session);
+    }
+
+    @DeleteMapping("/{id}")
+    public CartDeletionResult deleteCart(@PathVariable String id) {
+        return cartService.deleteCart(id);
     }
 }
