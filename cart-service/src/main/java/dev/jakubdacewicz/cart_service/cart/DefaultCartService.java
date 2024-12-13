@@ -4,9 +4,11 @@ import dev.jakubdacewicz.cart_service.cart.dto.*;
 import dev.jakubdacewicz.cart_service.product.ProductMapper;
 import dev.jakubdacewicz.cart_service.product.dto.Product;
 import dev.jakubdacewicz.cart_service.product.ProductService;
+import dev.jakubdacewicz.cart_service.session.SessionService;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.session.Session;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -26,22 +28,26 @@ class DefaultCartService implements CartService {
     private final CartCalculator cartCalculator;
 
     private final ProductService productService;
+    private final SessionService sessionService;
 
     DefaultCartService(CartMapper cartMapper,
                        ProductMapper productMapper,
                        CartCalculator cartCalculator,
-                       ProductService productService) {
+                       ProductService productService,
+                       SessionService sessionService) {
         this.cartMapper = cartMapper;
         this.productMapper = productMapper;
         this.cartCalculator = cartCalculator;
         this.productService = productService;
+        this.sessionService = sessionService;
     }
 
     @Override
     public SummaryCartDto getMyCart(HttpSession session) {
         logger.debug("Attempt to get summary cart of session '{}'", session.getId());
 
-        Cart cart = getOrCreateMyCart(session);
+        CartRetrievalStrategy<HttpSession> strategy = new SessionCartRetrievalStrategy();
+        Cart cart = strategy.getOrCreateCart(session);
 
         Set<String> productIds = cartMapper.toProductIds(cart.getCartItems());
         Set<Product> products = productService.fetchProducts(productIds);
@@ -55,18 +61,18 @@ class DefaultCartService implements CartService {
 
     @Override
     public DetailedCartDto getMyDetailedCart(HttpSession session) {
-        logger.debug("Attempt to get detailed cart of session '{}'", session.getId());
+        CartRetrievalStrategy<HttpSession> strategy = new SessionCartRetrievalStrategy();
 
-        Cart cart = getOrCreateMyCart(session);
+        return getDetailedCartInternal(strategy, session);
+    }
 
-        Set<String> productIds = cartMapper.toProductIds(cart.getCartItems());
-        Set<Product> products = productService.fetchProducts(productIds);
+    @Override
+    public DetailedCartDto getDetailedCart(String sessionId) {
+        CartRetrievalStrategy<Session> strategy = new DatabaseCartRetrievalStrategy();
 
-        Map<String, Product> productCatalog = productMapper.toProductCatalog(products);
-        BigDecimal totalPrice = cartCalculator.calculateTotalPrice(cart.getCartItems(), productCatalog);
+        Session session = sessionService.getSession(sessionId);
 
-        logger.info("Successfully got detailed cart of session '{}'", session.getId());
-        return cartMapper.toDetailedCartDto(cart, productCatalog, totalPrice);
+        return getDetailedCartInternal(strategy, session);
     }
 
     @Override
@@ -76,7 +82,8 @@ class DefaultCartService implements CartService {
 
         productService.validateProductExists(productId);
 
-        Cart cart = getOrCreateMyCart(session);
+        CartRetrievalStrategy<HttpSession> strategy = new SessionCartRetrievalStrategy();
+        Cart cart = strategy.getOrCreateCart(session);
 
         CartItem cartItem = new CartItem(productId, quantity);
         cart.addCartItem(cartItem);
@@ -93,7 +100,8 @@ class DefaultCartService implements CartService {
         logger.debug("Attempt to remove '{}' product of quantity {} from cart of session '{}'",
                 productId, quantity, session.getId());
 
-        Cart cart = getOrCreateMyCart(session);
+        CartRetrievalStrategy<HttpSession> strategy = new SessionCartRetrievalStrategy();
+        Cart cart = strategy.getOrCreateCart(session);
 
         CartItem cartItem = new CartItem(productId, quantity);
         cart.removeCartItem(cartItem);
@@ -105,27 +113,36 @@ class DefaultCartService implements CartService {
 
     @Override
     public CartDeletionResult deleteMyCart(HttpSession session) {
-        logger.debug("Attempt to delete cart of session '{}'", session.getId());
+        logger.debug("Attempt to delete current user's cart of session '{}'", session.getId());
 
         session.removeAttribute(CART_ATTRIBUTE_IN_SESSION);
 
-        logger.info("Successfully deleted cart of session '{}'", session.getId());
+        logger.info("Successfully deleted current user's cart of session '{}'", session.getId());
         return new CartDeletionResult(true);
     }
 
-    private Cart getOrCreateMyCart(HttpSession session) {
-        Cart cart = (Cart) session.getAttribute(CART_ATTRIBUTE_IN_SESSION);
+    @Override
+    public CartDeletionResult deleteCart(String id) {
+        logger.debug("Attempt to delete cart of session '{}'", id);
 
-        return (cart != null) ? cart : createNewCart(session);
+        Session session = sessionService.getSession(id);
+        session.removeAttribute(CART_ATTRIBUTE_IN_SESSION);
+
+        logger.info("Successfully deleted cart of session '{}'", id);
+        return new CartDeletionResult(true);
     }
 
-    private Cart createNewCart(HttpSession session) {
-        logger.debug("Attempt to create new cart of session '{}'", session.getId());
+    private <T> DetailedCartDto getDetailedCartInternal(CartRetrievalStrategy<T> strategy, T sessionContext) {
+        logger.debug("Retrieving detailed cart for {}", sessionContext);
 
-        Cart cart = new Cart();
-        session.setAttribute(CART_ATTRIBUTE_IN_SESSION, cart);
+        Cart cart = strategy.getOrCreateCart(sessionContext);
+        Set<String> productIds = cartMapper.toProductIds(cart.getCartItems());
+        Set<Product> products = productService.fetchProducts(productIds);
 
-        logger.info("Successfully created new cart of session '{}'", session.getId());
-        return cart;
+        Map<String, Product> productCatalog = productMapper.toProductCatalog(products);
+        BigDecimal totalPrice = cartCalculator.calculateTotalPrice(cart.getCartItems(), productCatalog);
+
+        logger.info("Successfully retrieved detailed cart");
+        return cartMapper.toDetailedCartDto(cart, productCatalog, totalPrice);
     }
 }
