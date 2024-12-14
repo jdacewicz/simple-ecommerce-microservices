@@ -9,6 +9,8 @@ import dev.jakubdacewicz.product_service.stock.dto.StockCreationRequest;
 import dev.jakubdacewicz.product_service.stock.dto.StockDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +39,7 @@ class DefaultProductService implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "products", key = "#id")
     public SummaryProductDto getProduct(String id) {
         logger.debug("Attempt to get '{}' simple product", id);
 
@@ -47,6 +50,7 @@ class DefaultProductService implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "detailedProducts", key = "#id")
     public DetailedProductDto getProductDetails(String id) {
         logger.debug("Attempt to get '{}' detailed product", id);
 
@@ -57,6 +61,7 @@ class DefaultProductService implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "productPages", key = "'page-' + #page + '-size-' + #size + '-name-' + #name")
     public Page<SummaryProductDto> getProducts(int page, int size, String name) {
         logger.debug("Attempt to get all products");
 
@@ -72,6 +77,7 @@ class DefaultProductService implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "productLists", key = "#ids.toString()")
     public List<SummaryProductDto> getProductsList(List<String> ids) {
         logger.debug("Attempt to get all products list");
 
@@ -82,6 +88,7 @@ class DefaultProductService implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = {"products", "productPages", "productLists"}, allEntries = true)
     public SummaryProductDto createProduct(ProductCreationRequest request) {
         logger.debug("Attempt to create product");
 
@@ -101,6 +108,7 @@ class DefaultProductService implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = {"products", "detailedProducts"}, key = "#id")
     public ProductUpdateResult updateProduct(String id, ProductUpdateRequest request) {
         logger.debug("Attempt to update '{}' product", id);
 
@@ -111,6 +119,7 @@ class DefaultProductService implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = {"products", "detailedProducts"}, key = "#id")
     public ProductCategoryUpdateResult addToCategory(String id, String categoryId) {
         logger.debug("Attempt to add '{}' product to '{}' category", id, categoryId);
 
@@ -126,6 +135,7 @@ class DefaultProductService implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = {"products", "detailedProducts"}, key = "#id")
     public ProductCategoryUpdateResult removeFromCategory(String id) {
         logger.debug("Attempt to remove '{}' product from category", id);
 
@@ -142,6 +152,7 @@ class DefaultProductService implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = {"products", "detailedProducts", "productPages", "productLists"}, key = "#id")
     public ProductDeletionResult deleteProduct(String id) {
         logger.debug("Attempt to delete '{}' product", id);
 
