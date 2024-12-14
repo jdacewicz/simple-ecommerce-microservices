@@ -6,9 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
+import java.io.IOException;
 import java.util.Set;
 
 import static dev.jakubdacewicz.cart_service.shared.utils.UriUtils.buildUriWithIds;
@@ -34,10 +37,7 @@ class ProductFetcher {
         return restClient.get()
                 .uri(uri)
                 .retrieve()
-                .onStatus(httpStatusCode -> !httpStatusCode.is2xxSuccessful(), (request, response) -> {
-                    logger.error("Failed to fetch product: {}, {}", response.getStatusCode(), response.getStatusText());
-                    throw new ProductFetchFailureException(response.getStatusText());
-                })
+                .onStatus(httpStatusCode -> !httpStatusCode.is2xxSuccessful(), this::handleErrorResponse)
                 .body(Product.class);
     }
 
@@ -46,10 +46,15 @@ class ProductFetcher {
         return restClient.get()
                 .uri(uriBuilder -> buildUriWithIds(productIds, uriBuilder, uri))
                 .retrieve()
-                .onStatus(httpStatusCode -> !httpStatusCode.is2xxSuccessful(), (request, response) -> {
-                    logger.error("Failed to fetch products: {}, {}", response.getStatusCode(), response.getStatusText());
-                    throw new ProductFetchFailureException(response.getStatusText());
-                })
+                .onStatus(httpStatusCode -> !httpStatusCode.is2xxSuccessful(), this::handleErrorResponse)
                 .body(new ParameterizedTypeReference<>() {});
+    }
+
+    private void handleErrorResponse(HttpRequest request, ClientHttpResponse response) throws IOException {
+        String errorBody = new String(response.getBody()
+                .readAllBytes());
+
+        logger.error("Request failed: Status {}, Body {}", response.getStatusCode(), errorBody);
+        throw new ProductFetchFailureException(response.getStatusText());
     }
 }

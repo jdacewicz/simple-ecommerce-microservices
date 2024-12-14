@@ -15,6 +15,7 @@ class CartCalculator {
     public BigDecimal calculateTotalPrice(Set<CartItem> cartItems,
                                           Map<String, Product> productCatalog) {
         return cartItems.stream()
+                .filter(cartItem -> cartItem != null && productCatalog.get(cartItem.getProductId()) != null)
                 .map(cartItem -> calculateSubtotalPrice(productCatalog, cartItem))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }

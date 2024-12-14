@@ -1,6 +1,7 @@
 package dev.jakubdacewicz.cart_service.product;
 
 import dev.jakubdacewicz.cart_service.product.dto.Product;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ class DefaultProductService implements ProductService {
         this.productFetcher = productFetcher;
     }
 
+    @CircuitBreaker(name = "productService", fallbackMethod = "fetchProductsFallback")
     @Retry(name = "productService")
     @Override
     public Set<Product> fetchProducts(Set<String> productIds) {
@@ -38,5 +40,10 @@ class DefaultProductService implements ProductService {
         productFetcher.fetchProduct(productId);
 
         logger.info("Successfully got '{}' product", productId);
+    }
+
+    private Set<Product> fetchProductsFallback(Set<String> productIds, Exception e) {
+        logger.warn("Fallback triggered for products {}: {}", productIds, e.getMessage());
+        return Set.of();
     }
 }
