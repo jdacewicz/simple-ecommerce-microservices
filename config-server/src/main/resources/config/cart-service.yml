@@ -12,3 +12,17 @@ eureka:
       defaultZone: http://service-registry:8761/eureka/
   instance:
     hostname: cart-service
+
+resilience4j:
+  retry:
+    instances:
+      productService:
+        max-attempts: 3
+        wait-duration: 2s
+  circuitbreaker:
+    instances:
+      productService:
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 2
+        sliding-window-size: 5

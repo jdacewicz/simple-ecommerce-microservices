@@ -32,6 +32,7 @@ class CartMapper {
     Set<CartItemDto> toCartItemDto(Set<CartItem> cartItems,
                                     Map<String, Product> productCatalog) {
         return cartItems.stream()
+                .filter(cartItem -> cartItem != null && productCatalog.get(cartItem.getProductId()) != null)
                 .map(cartItem -> toCartItemDto(cartItem, productCatalog.get(cartItem.getProductId())))
                 .collect(Collectors.toSet());
     }
