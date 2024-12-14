@@ -7,3 +7,10 @@ eureka:
       defaultZone: http://service-registry:8761/eureka/
   instance:
     hostname: order-service
+
+resilience4j:
+  retry:
+    instances:
+      productService:
+        max-attempts: 3
+        wait-duration: 2s
