@@ -1,7 +1,6 @@
 package dev.jakubdacewicz.order_service.cart;
 
 import dev.jakubdacewicz.order_service.cart.dto.Cart;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +20,6 @@ class DefaultCartService implements CartService {
         this.cartUpdater = cartUpdater;
     }
 
-    @CircuitBreaker(name = "cartService", fallbackMethod = "getCartFallback")
     @Retry(name = "cartService")
     @Override
     public Cart getCart(String id) {
@@ -41,10 +39,5 @@ class DefaultCartService implements CartService {
         cartUpdater.deleteCart(id);
 
         logger.info("Successfully deleted '{}' cart", id);
-    }
-
-    private Cart getCartFallback(String id, Exception e) {
-        logger.warn("Fallback triggered for cart {}: {}", id, e.getMessage());
-        return Cart.defaultCart();
     }
 }

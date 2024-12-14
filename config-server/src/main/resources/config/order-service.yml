@@ -14,10 +14,3 @@ resilience4j:
       cartService:
         max-attempts: 3
         wait-duration: 2s
-  circuitbreaker:
-    instances:
-      cartService:
-        failure-rate-threshold: 50
-        wait-duration-in-open-state: 10s
-        permitted-number-of-calls-in-half-open-state: 2
-        sliding-window-size: 5
