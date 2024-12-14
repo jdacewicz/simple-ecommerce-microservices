@@ -11,12 +11,12 @@ eureka:
 resilience4j:
   retry:
     instances:
-      productService:
+      cartService:
         max-attempts: 3
         wait-duration: 2s
   circuitbreaker:
     instances:
-      productService:
+      cartService:
         failure-rate-threshold: 50
         wait-duration-in-open-state: 10s
         permitted-number-of-calls-in-half-open-state: 2
